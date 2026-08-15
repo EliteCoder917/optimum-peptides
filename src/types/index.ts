@@ -28,3 +28,17 @@ export type Order = {
   customerEmail: string;
   createdAt: string;
 };
+
+export type ReviewStatus = "pending" | "approved" | "rejected";
+
+export type Review = {
+  id: string;
+  productId: string;
+  reviewerName: string;
+  title: string;
+  description: string;
+  rating: number;
+  imageUrls: string[];
+  status: ReviewStatus;
+  createdAt: string;
+};

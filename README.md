@@ -58,6 +58,7 @@ admin panel; an `is_admin()` helper function gates the write/read policies
 on products, variants, and orders.
 
 There's no self-signup. To create the first admin:
+
 1. In the Supabase dashboard, go to Authentication → Users and invite/create
    the person's account.
 2. Copy their user id and insert it into `admin_users` via the SQL editor:
@@ -66,3 +67,11 @@ There's no self-signup. To create the first admin:
 The actual `/admin` pages, login form, and route protection (checking the
 session + `admin_users` membership) still need to be built — this migration
 only sets up the data model.
+
+### Reviews
+
+`reviews` holds title, description, star rating (1–5), and an array of
+image URLs, tied to a `product_id`. Anyone can submit one (no accounts
+needed) but it's inserted as `pending` and only shows up publicly once an
+admin sets it to `approved` — the insert policy enforces the `pending`
+status so a submitter can't self-approve.
