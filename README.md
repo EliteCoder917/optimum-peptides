@@ -71,7 +71,26 @@ only sets up the data model.
 ### Reviews
 
 `reviews` holds title, description, star rating (1–5), and an array of
-image URLs, tied to a `product_id`. Anyone can submit one (no accounts
-needed) but it's inserted as `pending` and only shows up publicly once an
-admin sets it to `approved` — the insert policy enforces the `pending`
-status so a submitter can't self-approve.
+image URLs, tied to a `product_id`. It goes public once an admin sets its
+status to `approved` — still `pending` by default either way.
+
+Reviews are verified-purchase only, no accounts needed. Every `order_items`
+row has a `review_token` (unguessable uuid) and a `reviewed_at` timestamp.
+The flow, once built:
+
+1. When an order ships, the customer is emailed a link containing their
+   order item's `review_token` (e.g. `/review/<token>`).
+2. That page looks up the order item by token server-side and lets them
+   fill out the review form.
+3. Submission goes through an API route using the service role key, which
+   checks the token is valid and `reviewed_at is null`, inserts the review
+   (linked via `order_item_id`, unique — one review per purchased item),
+   and sets `reviewed_at` so the link can't be reused.
+
+There's no public insert policy on `reviews` — token validation is a
+server-side check, not something RLS can enforce on its own, so all writes
+go through that route rather than a direct client-side insert.
+
+Still to build: the `/review/[token]` page, the submission API route, and
+the email that sends the link (needs an email provider — Resend, SendGrid,
+etc. — and a decision on when it fires, e.g. on order fulfillment).
