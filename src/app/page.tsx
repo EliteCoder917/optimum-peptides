@@ -55,7 +55,7 @@ export default function Home() {
         {/* HERO */}
         <section className="relative min-h-[700px] overflow-hidden">
           <img
-            src="/images/hero.jpg"
+            src="/images/hero.png"
             alt="Research laboratory visualisation"
             className="absolute inset-0 h-full w-full object-cover opacity-50"
           />
@@ -106,7 +106,7 @@ export default function Home() {
             <div className="relative">
               <div className="glow-ring panel relative overflow-hidden rounded-[2rem] p-4 sm:p-5">
                 <img
-                  src="/images/box.jpg"
+                  src="/images/box.png"
                   alt="Research laboratory packaging"
                   className="w-full rounded-[1.5rem] object-cover"
                 />
@@ -168,7 +168,7 @@ export default function Home() {
                 <div className="p-4">
                   <div className="overflow-hidden rounded-xl">
                     <img
-                      src="/images/vial.jpg"
+                      src="/images/vial.png"
                       alt="Research material"
                       className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
@@ -189,7 +189,7 @@ export default function Home() {
         <section id="research" className="border-b border-border">
           <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 py-24 lg:grid-cols-2">
             <img
-              src="/images/research.jpg"
+              src="/images/research.png"
               alt="Scientific research visualisation"
               className="glow-ring w-full rounded-3xl object-cover"
             />
