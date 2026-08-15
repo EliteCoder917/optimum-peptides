@@ -93,7 +93,7 @@ export default function Home() {
 
               <div className="mt-9">
                 <a
-                  href="#research"
+                  href="/shop"
                   className="inline-flex items-center rounded-full bg-primary px-7 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
                 >
                   Explore Product Range
