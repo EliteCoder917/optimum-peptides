@@ -49,3 +49,20 @@ is safe to use in client components.
 
 To point the app at a Supabase project, copy `.env.example` to `.env.local`
 and fill in the values from your project's API settings.
+
+### Admin access
+
+Admin login uses Supabase Auth (`auth.users`) — no custom password table.
+`admin_users` just marks which authenticated users are allowed into the
+admin panel; an `is_admin()` helper function gates the write/read policies
+on products, variants, and orders.
+
+There's no self-signup. To create the first admin:
+1. In the Supabase dashboard, go to Authentication → Users and invite/create
+   the person's account.
+2. Copy their user id and insert it into `admin_users` via the SQL editor:
+   `insert into admin_users (user_id) values ('<their-auth-user-id>');`
+
+The actual `/admin` pages, login form, and route protection (checking the
+session + `admin_users` membership) still need to be built — this migration
+only sets up the data model.
