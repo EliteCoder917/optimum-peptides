@@ -27,10 +27,6 @@ export default function AdminTopbar({
         </div>
 
         <NotificationsBell />
-
-        <div className="flex size-9 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white">
-          A
-        </div>
       </div>
     </header>
   );
