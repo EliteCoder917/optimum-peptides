@@ -69,24 +69,36 @@ products, variants, and orders.
 There's no public sign-up. Access is invite-only, and the invite itself is
 what grants admin rights — nothing extra to run by hand afterward:
 
-1. In the Supabase dashboard, go to **Authentication → Users → Invite user**
-   and enter the person's email. Under **Redirect URL**, set it to
-   `<your-site-url>/admin/accept-invite` (e.g.
-   `http://localhost:3000/admin/accept-invite` for local dev, or your
-   production domain once deployed). That URL must also be added to
-   **Authentication → URL Configuration → Redirect URLs**, or Supabase will
-   refuse to redirect there.
-2. They receive an email, click the link, and land on `/admin/accept-invite`
+1. First, make sure the redirect URL is allow-listed in the Supabase
+   dashboard under **Authentication → URL Configuration → Redirect URLs**:
+   add `http://localhost:3000/admin/accept-invite` for local dev and
+   `<production-domain>/admin/accept-invite` once deployed. Both can sit in
+   the list at the same time.
+2. Send the invite with:
+   ```bash
+   npm run invite-admin -- someone@example.com
+   # or, against production:
+   npm run invite-admin -- someone@example.com https://optimum-peptides.com
+   ```
+   **Don't use the Dashboard's "Invite user" button** — it has no field for
+   a custom redirect and always falls back to the Site URL, so the email
+   link lands on the homepage instead of `/admin/accept-invite` no matter
+   what's in the allow-list. `scripts/invite-admin.mjs` calls the Admin API
+   directly with an explicit `redirectTo`, which is what actually works.
+3. They receive an email, click the link, and land on `/admin/accept-invite`
    to set their password.
-3. On submit, the page calls `/api/admin/complete-invite`, which checks
+4. On submit, the page calls `/api/admin/complete-invite`, which checks
    they have a valid session (only possible if they were genuinely invited —
    there's no other way to get a Supabase session in this app) and inserts
    them into `admin_users`. They're redirected straight into `/admin`.
 
-From then on they log in normally at `/admin/login`. `src/middleware.ts`
-protects every `/admin/*` route except `/admin/login` and
-`/admin/accept-invite` — it checks for a valid session and `admin_users`
-membership, redirecting to login otherwise.
+From then on they log in normally at `/admin/login`. `src/proxy.ts` (Next's
+renamed `middleware.ts` convention as of v16) protects every `/admin/*`
+route except `/admin/login` and `/admin/accept-invite` — it checks for a
+valid session and `admin_users` membership, redirecting to login otherwise.
+
+Supabase's built-in email sending has a low rate limit on the free tier —
+if invites stop arriving, that's usually why.
 
 ### Reviews
 
