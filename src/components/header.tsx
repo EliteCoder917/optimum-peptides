@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, Search, ShoppingCart, X } from "lucide-react";
+import Logo from "@/components/logo";
 
 const NAV_LINKS = [
   { label: "Browse", href: "/shop" },
@@ -17,13 +18,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto grid h-20 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-5">
         {/* Logo */}
-        <Link
-          href="/"
-          className="justify-self-start text-lg font-semibold tracking-tight"
-        >
-          <span className="text-foreground">Optimum </span>
-          <span className="text-primary">Peptides</span>
-        </Link>
+        <Logo className="justify-self-start" />
 
         {/* Navigation */}
         <nav className="hidden items-center gap-9 lg:flex">

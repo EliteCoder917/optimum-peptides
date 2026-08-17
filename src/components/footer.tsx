@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "@/components/logo";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -8,12 +9,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 lg:grid-cols-[1.2fr_0.6fr_1.2fr]">
         {/* Brand */}
         <div>
-          <Link
-            href="/"
-            className="text-xl font-semibold tracking-tight text-foreground"
-          >
-            Optimum <span className="text-primary">Peptides</span>
-          </Link>
+          <Logo textClassName="text-xl" />
 
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
             Your straightforward source for high-quality peptides, with easy
