@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Menu, Search, ShoppingCart, X } from "lucide-react";
 
 const NAV_LINKS = [
-  { label: "Browse", href: "/#collection" },
+  { label: "Browse", href: "/shop" },
   { label: "About Us", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];

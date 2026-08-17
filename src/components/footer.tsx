@@ -30,7 +30,7 @@ export default function Footer() {
           <ul className="space-y-2 text-muted-foreground">
             <li>
               <Link
-                href="/#collection"
+                href="/shop"
                 className="transition-colors hover:text-primary"
               >
                 Browse Catalog
