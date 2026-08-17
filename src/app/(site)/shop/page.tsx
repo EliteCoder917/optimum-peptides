@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 
-const categories = [
-  "All",
-  "Blends",
-  "Singles",
-  "Kits",
-  "Accessories",
-];
+const categories = ["All", "Blends", "Singles", "Kits", "Accessories"];
 
 const products = [
   {
@@ -76,7 +70,7 @@ export default function Shop() {
       (active === "All" || product.category === active) &&
       (query.trim() === "" ||
         product.name.toLowerCase().includes(query.toLowerCase()) ||
-        product.category.toLowerCase().includes(query.toLowerCase()))
+        product.category.toLowerCase().includes(query.toLowerCase())),
   );
 
   return (
@@ -98,14 +92,12 @@ export default function Shop() {
             </p>
 
             <h1 className="mt-3 text-5xl font-bold sm:text-6xl">
-              <span className="text-brand-gradient">
-                Our Collection
-              </span>
+              <span className="text-brand-gradient">Our Collection</span>
             </h1>
 
             <p className="mt-5 max-w-lg text-muted-foreground">
-              Explore our range of research materials and browse by
-              category to find the information relevant to your work.
+              Explore our range of research materials and browse by category to
+              find the information relevant to your work.
             </p>
           </div>
         </section>
@@ -149,9 +141,7 @@ export default function Shop() {
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <h2 className="text-xl font-semibold">
-                      {product.name}
-                    </h2>
+                    <h2 className="text-xl font-semibold">{product.name}</h2>
 
                     <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
                       {product.category}
