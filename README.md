@@ -43,9 +43,18 @@ guest-only, orders are tracked by email rather than a user id.
 
 Row Level Security is on for every table. `products`/`product_variants` allow
 public read of active rows; `orders`/`order_items` have no public policies —
-they're only reachable through server-side code using the service role key
-(`src/lib/supabase/server.ts`). The anon key client (`src/lib/supabase/client.ts`)
-is safe to use in client components.
+they're only reachable through server-side code using the service role key.
+
+Three Supabase clients, each with a distinct purpose:
+
+- `src/lib/supabase/client.ts` — anon key, subject to RLS, cookie-backed
+  session. Safe to import in client components.
+- `src/lib/supabase/server.ts` — anon key + the current request's session
+  cookie, subject to RLS. Use in Server Components / Route Handlers when you
+  need to know who's logged in.
+- `src/lib/supabase/admin.ts` — service role key, bypasses RLS entirely.
+  Server-only (guarded by the `server-only` package). Never expose to the
+  client.
 
 To point the app at a Supabase project, copy `.env.example` to `.env.local`
 and fill in the values from your project's API settings.
@@ -53,20 +62,31 @@ and fill in the values from your project's API settings.
 ### Admin access
 
 Admin login uses Supabase Auth (`auth.users`) — no custom password table.
-`admin_users` just marks which authenticated users are allowed into the
-admin panel; an `is_admin()` helper function gates the write/read policies
-on products, variants, and orders.
+`admin_users` marks which authenticated users are allowed into the admin
+panel; an `is_admin()` helper function gates the write/read policies on
+products, variants, and orders.
 
-There's no self-signup. To create the first admin:
+There's no public sign-up. Access is invite-only, and the invite itself is
+what grants admin rights — nothing extra to run by hand afterward:
 
-1. In the Supabase dashboard, go to Authentication → Users and invite/create
-   the person's account.
-2. Copy their user id and insert it into `admin_users` via the SQL editor:
-   `insert into admin_users (user_id) values ('<their-auth-user-id>');`
+1. In the Supabase dashboard, go to **Authentication → Users → Invite user**
+   and enter the person's email. Under **Redirect URL**, set it to
+   `<your-site-url>/admin/accept-invite` (e.g.
+   `http://localhost:3000/admin/accept-invite` for local dev, or your
+   production domain once deployed). That URL must also be added to
+   **Authentication → URL Configuration → Redirect URLs**, or Supabase will
+   refuse to redirect there.
+2. They receive an email, click the link, and land on `/admin/accept-invite`
+   to set their password.
+3. On submit, the page calls `/api/admin/complete-invite`, which checks
+   they have a valid session (only possible if they were genuinely invited —
+   there's no other way to get a Supabase session in this app) and inserts
+   them into `admin_users`. They're redirected straight into `/admin`.
 
-The actual `/admin` pages, login form, and route protection (checking the
-session + `admin_users` membership) still need to be built — this migration
-only sets up the data model.
+From then on they log in normally at `/admin/login`. `src/middleware.ts`
+protects every `/admin/*` route except `/admin/login` and
+`/admin/accept-invite` — it checks for a valid session and `admin_users`
+membership, redirecting to login otherwise.
 
 ### Reviews
 
