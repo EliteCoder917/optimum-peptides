@@ -1,41 +1,3 @@
-const applications = [
-  {
-    title: "Metabolic Studies",
-    body: "Exploring energy balance, glucose handling and nutrient partitioning models.",
-  },
-  {
-    title: "Body Composition",
-    body: "Investigating lean-mass preservation and adipose signalling in preclinical models.",
-  },
-  {
-    title: "Receptor Science",
-    body: "Mapping receptor interactions across different research models.",
-  },
-  {
-    title: "Recovery Pathways",
-    body: "Investigating tissue repair and related pathways across preclinical protocols.",
-  },
-];
-
-const researchFeatures = [
-  {
-    title: "High Purity",
-    body: "Research materials are analysed for identity and purity.",
-  },
-  {
-    title: "Third-Party Testing",
-    body: "Independent testing helps provide greater consistency between batches.",
-  },
-  {
-    title: "Research Grade",
-    body: "Products are handled and documented according to laboratory requirements.",
-  },
-  {
-    title: "Expert Support",
-    body: "A specialist team is available to answer research-related questions.",
-  },
-];
-
 const collection = [
   "Collection One",
   "Collection Two",
@@ -56,7 +18,7 @@ export default function Home() {
         <section className="relative min-h-[700px] overflow-hidden">
           <img
             src="/images/hero.png"
-            alt="Research laboratory visualisation"
+            alt="Optimum Peptides"
             className="absolute inset-0 h-full w-full object-cover opacity-50"
           />
 
@@ -68,7 +30,7 @@ export default function Home() {
             {/* LEFT SIDE */}
             <div>
               <span className="inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-[11px] uppercase tracking-[0.24em] text-primary">
-                High Purity Compounds
+                Premium Peptides
               </span>
 
               <h1 className="mt-6 text-5xl font-bold leading-[0.95] sm:text-7xl lg:text-8xl">
@@ -76,12 +38,12 @@ export default function Home() {
               </h1>
 
               <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
-                Optimum Peptides is focused on providing high-quality research
-                materials and reliable information for scientific research.
+                Optimum Peptides is your straightforward source for high-quality
+                peptides, with easy ordering and fast shipping.
               </p>
 
               <div className="mt-8 grid max-w-lg grid-cols-2 gap-3 sm:grid-cols-4">
-                {["Research", "Quality", "Testing", "Science"].map((chip) => (
+                {["Blends", "Singles", "Kits", "Accessories"].map((chip) => (
                   <div
                     key={chip}
                     className="panel rounded-xl px-3 py-3 text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
@@ -107,7 +69,7 @@ export default function Home() {
               <div className="glow-ring panel relative overflow-hidden rounded-[2rem] p-4 sm:p-5">
                 <img
                   src="/images/box.png"
-                  alt="Research laboratory packaging"
+                  alt="Optimum Peptides packaging"
                   className="w-full rounded-[1.5rem] object-cover"
                 />
 
@@ -121,11 +83,11 @@ export default function Home() {
         <section className="border-y border-border bg-card/40">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-6 px-5 py-6">
             {[
-              "Research applications",
-              "High purity",
-              "Third-party tested",
-              "Quality focused",
-              "Secure shipping",
+              "Fast shipping",
+              "Secure checkout",
+              "Wide selection",
+              "Easy returns",
+              "Friendly support",
             ].map((item) => (
               <div
                 key={item}
@@ -152,7 +114,7 @@ export default function Home() {
             </div>
 
             <a
-              href="#research"
+              href="/shop"
               className="rounded-full border border-border px-5 py-2.5 text-sm font-medium uppercase tracking-[0.16em] transition-colors hover:bg-white/5"
             >
               Explore More
@@ -169,7 +131,7 @@ export default function Home() {
                   <div className="overflow-hidden rounded-xl">
                     <img
                       src="/images/vial.png"
-                      alt="Research material"
+                      alt="Peptide vial"
                       className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
@@ -185,86 +147,19 @@ export default function Home() {
           </div>
         </section>
 
-        {/* RESEARCH */}
-        <section id="research" className="border-b border-border">
-          <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 py-24 lg:grid-cols-2">
-            <img
-              src="/images/research.png"
-              alt="Scientific research visualisation"
-              className="glow-ring w-full rounded-3xl object-cover"
-            />
-
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-primary">
-                Targeted Research Areas
-              </p>
-
-              <h2 className="mt-3 text-4xl font-bold sm:text-5xl">
-                Built For Enhancement
-              </h2>
-
-              <p className="mt-5 max-w-lg text-muted-foreground">
-                Our focus is on providing consistent research materials,
-                transparent information and a reliable experience for scientific
-                work.
-              </p>
-
-              <div className="mt-9 grid gap-4 sm:grid-cols-2">
-                {applications.map((application) => (
-                  <div
-                    key={application.title}
-                    className="panel rounded-2xl p-5"
-                  >
-                    <h3 className="text-base font-semibold">
-                      {application.title}
-                    </h3>
-
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      {application.body}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* QUALITY */}
-        <section className="mx-auto max-w-7xl px-5 py-24">
-          <p className="text-[11px] uppercase tracking-[0.24em] text-primary">
-            Why Optimum Peptides
-          </p>
-
-          <h2 className="mt-3 max-w-2xl text-4xl font-bold sm:text-5xl">
-            Quality you can verify
-          </h2>
-
-          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {researchFeatures.map((feature) => (
-              <div key={feature.title} className="panel rounded-2xl p-6">
-                <div className="text-2xl text-primary">✦</div>
-
-                <h3 className="mt-5 text-lg font-semibold">{feature.title}</h3>
-
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {feature.body}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* ABOUT */}
         <section id="about" className="border-t border-border">
           <div className="mx-auto max-w-3xl px-5 py-24 text-center">
             <h2 className="text-4xl font-bold sm:text-5xl">
-              Advancing science.
+              Premium peptides.
               <br />
-              Enriching lives.
+              Made simple.
             </h2>
 
             <p className="mt-5 text-muted-foreground">
-              Optimum Peptides exists to benefit and enhance the human body.
+              Optimum Peptides is here to make finding and ordering peptides
+              easy, with a straightforward shopping experience from browse to
+              checkout.
             </p>
 
             <a

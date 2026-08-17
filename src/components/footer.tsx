@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function Footer() {
   const year = new Date().getFullYear();
 
@@ -8,17 +10,16 @@ export default function Footer() {
       <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 lg:grid-cols-[1.2fr_0.6fr_1.2fr]">
         {/* Brand */}
         <div>
-          <a
+          <Link
             href="/"
             className="text-xl font-semibold tracking-tight text-foreground"
           >
             Optimum <span className="text-primary">Peptides</span>
-          </a>
+          </Link>
 
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            Supplying laboratories and independent researchers with high-purity
-            research materials, batch-tested and handled according to laboratory
-            standards.
+            Your straightforward source for high-quality peptides, with easy
+            ordering and fast, secure shipping.
           </p>
         </div>
 
@@ -30,39 +31,21 @@ export default function Footer() {
 
           <ul className="space-y-2 text-muted-foreground">
             <li>
-              <a
-                href="/#lineup"
+              <Link
+                href="/#collection"
                 className="transition-colors hover:text-primary"
               >
                 Browse Catalog
-              </a>
+              </Link>
             </li>
 
             <li>
-              <a
-                href="/#quality"
-                className="transition-colors hover:text-primary"
-              >
-                Quality
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="/#research"
-                className="transition-colors hover:text-primary"
-              >
-                Research
-              </a>
-            </li>
-
-            <li>
-              <a
+              <Link
                 href="/#about"
                 className="transition-colors hover:text-primary"
               >
                 About Us
-              </a>
+              </Link>
             </li>
 
             <li>

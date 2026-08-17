@@ -6,8 +6,6 @@ import { Menu, Search, ShoppingCart, X } from "lucide-react";
 
 const NAV_LINKS = [
   { label: "Browse", href: "/#collection" },
-  { label: "Research", href: "/#research" },
-  { label: "Quality", href: "/#quality" },
   { label: "About Us", href: "/#about" },
   { label: "Contact", href: "/contact" },
 ];

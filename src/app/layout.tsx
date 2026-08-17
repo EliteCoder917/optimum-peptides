@@ -15,7 +15,7 @@ const chakraPetch = Chakra_Petch({
 
 export const metadata: Metadata = {
   title: "Optimum Peptides",
-  description: "Research peptides, done right.",
+  description: "Premium peptides, done right.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

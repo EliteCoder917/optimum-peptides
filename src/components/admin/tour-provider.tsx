@@ -122,6 +122,10 @@ export function TourProvider({
 
   useEffect(() => {
     if (resumeAt === null) return;
+    // Intentional: this needs to land in a render after stepIndex settles,
+    // not the same one — see the comment above resumeAt. Deliberately not
+    // derived during render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRun(true);
     setResumeAt(null);
   }, [resumeAt]);

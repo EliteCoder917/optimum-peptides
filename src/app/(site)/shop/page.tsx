@@ -33,7 +33,7 @@ const products = [
     name: "...",
     size: "...",
     category: "Blends",
-    image: "/images/research.png",
+    image: "/images/box.png",
   },
   {
     name: "...",
@@ -80,7 +80,7 @@ export default function Shop() {
         <section className="relative overflow-hidden border-b border-border">
           <img
             src="/images/hero.png"
-            alt="Optimum Peptides research catalogue"
+            alt="Optimum Peptides catalogue"
             className="absolute inset-0 h-full w-full object-cover opacity-40"
           />
 
@@ -96,8 +96,8 @@ export default function Shop() {
             </h1>
 
             <p className="mt-5 max-w-lg text-muted-foreground">
-              Explore our range of research materials and browse by category to
-              find the information relevant to your work.
+              Explore our range of peptides and browse by category to find
+              exactly what you need.
             </p>
           </div>
         </section>
