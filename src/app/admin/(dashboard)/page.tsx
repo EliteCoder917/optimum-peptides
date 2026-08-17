@@ -12,7 +12,10 @@ export default function AdminDashboard() {
       />
 
       <div className="space-y-6 p-8">
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          id="tour-dashboard-stats"
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+        >
           <StatCard
             label="Total Revenue"
             value="$0"
@@ -68,7 +71,10 @@ export default function AdminDashboard() {
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr]">
-          <div className="rounded-2xl border border-gray-200 bg-white p-6">
+          <div
+            id="tour-recent-orders"
+            className="rounded-2xl border border-gray-200 bg-white p-6"
+          >
             <h2 className="text-base font-semibold text-gray-900">
               Recent Orders
             </h2>
@@ -80,7 +86,10 @@ export default function AdminDashboard() {
             />
           </div>
 
-          <div className="rounded-2xl border border-gray-200 bg-white p-6">
+          <div
+            id="tour-low-stock"
+            className="rounded-2xl border border-gray-200 bg-white p-6"
+          >
             <h2 className="text-base font-semibold text-gray-900">
               Low Stock Alert
             </h2>

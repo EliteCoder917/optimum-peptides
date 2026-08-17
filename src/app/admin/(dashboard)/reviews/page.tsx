@@ -89,88 +89,92 @@ export default function AdminReviews() {
           </div>
         </div>
 
-        {visible.length > 0 && (
-          <div className="mt-6 space-y-4">
-            {visible.map((review) => (
-              <div
-                key={review.id}
-                className="rounded-2xl border border-gray-200 bg-white p-5"
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="font-medium text-gray-900">
-                    {review.reviewerName}
-                  </p>
-                  <span className="text-gray-300">·</span>
-                  <p className="text-sm text-gray-500">{review.productName}</p>
-                  <StatusBadge
-                    tone={
-                      review.status === "Published"
-                        ? "green"
-                        : review.status === "Pending"
-                          ? "amber"
-                          : "red"
-                    }
-                  >
-                    {review.status}
-                  </StatusBadge>
-                </div>
-
-                <div className="mt-1 flex items-center gap-1">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <Star
-                      key={index}
-                      className={`size-3.5 ${
-                        index < review.rating
-                          ? "fill-amber-400 text-amber-400"
-                          : "fill-gray-200 text-gray-200"
-                      }`}
-                    />
-                  ))}
-                  <span className="ml-1 text-xs text-gray-400">
-                    {review.date}
-                  </span>
-                </div>
-
-                <p className="mt-3 text-sm text-gray-600">
-                  {review.description}
-                </p>
-
-                {review.status === "Pending" ? (
-                  <div className="mt-4 flex gap-2">
-                    <button
-                      type="button"
-                      className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700"
+        <div id="tour-reviews-queue" className="mt-6">
+          {visible.length > 0 && (
+            <div className="space-y-4">
+              {visible.map((review) => (
+                <div
+                  key={review.id}
+                  className="rounded-2xl border border-gray-200 bg-white p-5"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-medium text-gray-900">
+                      {review.reviewerName}
+                    </p>
+                    <span className="text-gray-300">·</span>
+                    <p className="text-sm text-gray-500">
+                      {review.productName}
+                    </p>
+                    <StatusBadge
+                      tone={
+                        review.status === "Published"
+                          ? "green"
+                          : review.status === "Pending"
+                            ? "amber"
+                            : "red"
+                      }
                     >
-                      Approve
-                    </button>
-                    <button
-                      type="button"
-                      className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100"
-                    >
-                      Reject
-                    </button>
+                      {review.status}
+                    </StatusBadge>
                   </div>
-                ) : (
-                  <button
-                    type="button"
-                    className="mt-4 text-xs font-medium text-gray-400 hover:text-gray-600"
-                  >
-                    Undo
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
 
-        {visible.length === 0 && (
-          <div className="mt-6 rounded-2xl border border-gray-200 bg-white">
-            <EmptyState
-              title="No reviews yet"
-              description="Customer reviews will show up here for moderation once your store starts shipping orders."
-            />
-          </div>
-        )}
+                  <div className="mt-1 flex items-center gap-1">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <Star
+                        key={index}
+                        className={`size-3.5 ${
+                          index < review.rating
+                            ? "fill-amber-400 text-amber-400"
+                            : "fill-gray-200 text-gray-200"
+                        }`}
+                      />
+                    ))}
+                    <span className="ml-1 text-xs text-gray-400">
+                      {review.date}
+                    </span>
+                  </div>
+
+                  <p className="mt-3 text-sm text-gray-600">
+                    {review.description}
+                  </p>
+
+                  {review.status === "Pending" ? (
+                    <div className="mt-4 flex gap-2">
+                      <button
+                        type="button"
+                        className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        type="button"
+                        className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      className="mt-4 text-xs font-medium text-gray-400 hover:text-gray-600"
+                    >
+                      Undo
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {visible.length === 0 && (
+            <div className="rounded-2xl border border-gray-200 bg-white">
+              <EmptyState
+                title="No reviews yet"
+                description="Customer reviews will show up here for moderation once your store starts shipping orders."
+              />
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

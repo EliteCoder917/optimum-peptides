@@ -126,3 +126,23 @@ go through that route rather than a direct client-side insert.
 Still to build: the `/review/[token]` page, the submission API route, and
 the email that sends the link (needs an email provider — Resend, SendGrid,
 etc. — and a decision on when it fires, e.g. on order fulfillment).
+
+### Admin onboarding tour
+
+First-time admins get a "Welcome" notification in the bell icon (top right
+of the admin panel) offering a guided tour of the Dashboard, Products,
+Orders, and Reviews pages. Anyone can replay it anytime via the same bell
+("Take the tour again").
+
+Requires the `admin_users.has_seen_tour` column from
+`20260817000001_admin_tour.sql` — **run that migration before this works**,
+otherwise `/api/admin/dismiss-tour` will 500 (harmlessly; the tour itself
+still runs, it just won't remember it's been seen).
+
+Built with `react-joyride` v3. One thing worth knowing if this ever needs
+touching: Joyride mishandles `stepIndex` and `run` changing to `true` in
+the same render when resuming a tour after a page navigation — it fails to
+find the target even though it exists. `TourProvider` works around this by
+settling `stepIndex` on its own render first, then flipping `run` on a
+separate one via a follow-up effect. Skipping that split reintroduces the
+bug.

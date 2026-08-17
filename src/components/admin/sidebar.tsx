@@ -37,7 +37,7 @@ export default function AdminSidebar({ email }: { email: string }) {
         <p className="mt-0.5 text-xs text-gray-500">Admin Console</p>
       </div>
 
-      <nav className="flex-1 px-4">
+      <nav id="tour-sidebar-nav" className="flex-1 px-4">
         <p className="px-2 pb-2 text-[11px] font-medium uppercase tracking-wider text-gray-600">
           Menu
         </p>

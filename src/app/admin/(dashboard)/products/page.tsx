@@ -39,7 +39,10 @@ export default function AdminProducts() {
       />
 
       <div className="p-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div
+          id="tour-products-toolbar"
+          className="flex flex-wrap items-center justify-between gap-3"
+        >
           <FilterTabs
             options={FILTERS.map((label) => ({
               label,
@@ -71,7 +74,10 @@ export default function AdminProducts() {
           />
         </div>
 
-        <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+        <div
+          id="tour-products-table"
+          className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white"
+        >
           <table className="w-full text-left text-sm">
             <thead className="border-b border-gray-200 text-xs uppercase tracking-wide text-gray-500">
               <tr>

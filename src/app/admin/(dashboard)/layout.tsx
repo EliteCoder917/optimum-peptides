@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/admin/sidebar";
+import { TourProvider } from "@/components/admin/tour-provider";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -23,10 +24,18 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
+  const { data: adminRow } = await supabase
+    .from("admin_users")
+    .select("has_seen_tour")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
   return (
-    <div className="flex min-h-screen bg-gray-50 text-gray-900">
-      <AdminSidebar email={user.email ?? ""} />
-      <div className="flex-1">{children}</div>
-    </div>
+    <TourProvider initialHasSeenTour={adminRow?.has_seen_tour ?? false}>
+      <div className="flex min-h-screen bg-gray-50 text-gray-900">
+        <AdminSidebar email={user.email ?? ""} />
+        <div className="flex-1">{children}</div>
+      </div>
+    </TourProvider>
   );
 }

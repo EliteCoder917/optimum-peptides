@@ -1,4 +1,5 @@
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import NotificationsBell from "@/components/admin/notifications-bell";
 
 export default function AdminTopbar({
   title,
@@ -25,14 +26,7 @@ export default function AdminTopbar({
           />
         </div>
 
-        <button
-          type="button"
-          aria-label="Notifications"
-          className="relative flex size-9 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50"
-        >
-          <Bell className="size-4" />
-          <span className="absolute right-2 top-2 size-1.5 rounded-full bg-blue-500" />
-        </button>
+        <NotificationsBell />
 
         <div className="flex size-9 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white">
           A
