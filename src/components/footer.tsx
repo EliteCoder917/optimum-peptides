@@ -1,12 +1,10 @@
-"use client";
-
 import Link from "next/link";
 
 export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="border-t border-border bg-card/40">
+    <footer className="border-t border-border bg-card/40">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 lg:grid-cols-[1.2fr_0.6fr_1.2fr]">
         {/* Brand */}
         <div>
@@ -41,7 +39,7 @@ export default function Footer() {
 
             <li>
               <Link
-                href="/#about"
+                href="/about"
                 className="transition-colors hover:text-primary"
               >
                 About Us
@@ -49,60 +47,37 @@ export default function Footer() {
             </li>
 
             <li>
-              <a
-                href="#contact"
+              <Link
+                href="/contact"
                 className="transition-colors hover:text-primary"
               >
                 Contact
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>
 
-        {/* Contact */}
-        <form
-          className="panel rounded-2xl p-6"
-          onSubmit={(e) => {
-            e.preventDefault();
-            e.currentTarget.reset();
-          }}
-        >
-          <h3 className="mb-4 text-[12px] uppercase tracking-[0.2em]">
-            Contact Us
+        {/* Get in Touch */}
+        <div className="panel rounded-2xl p-6">
+          <h3 className="mb-2 text-[12px] uppercase tracking-[0.2em]">
+            Get in Touch
           </h3>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <input
-              type="text"
-              placeholder="Name"
-              aria-label="Name"
-              required
-              className="h-10 rounded-md border border-border bg-secondary/50 px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
-            />
+          <p className="text-sm text-muted-foreground">
+            Have a question? Reach out and we will get back to you.
+          </p>
 
-            <input
-              type="email"
-              placeholder="Email"
-              aria-label="Email"
-              required
-              className="h-10 rounded-md border border-border bg-secondary/50 px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
-            />
-          </div>
+          <p className="mt-4 text-sm text-foreground">
+            admin@optimum-peptides.com
+          </p>
 
-          <textarea
-            placeholder="Message"
-            aria-label="Message"
-            required
-            className="mt-3 min-h-24 w-full resize-none rounded-md border border-border bg-secondary/50 px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
-          />
-
-          <button
-            type="submit"
-            className="mt-4 w-full rounded-md bg-primary px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-90"
+          <Link
+            href="/contact"
+            className="mt-4 inline-flex rounded-md bg-primary px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-90"
           >
-            Send Message
-          </button>
-        </form>
+            Contact Us
+          </Link>
+        </div>
       </div>
 
       {/* Copyright */}

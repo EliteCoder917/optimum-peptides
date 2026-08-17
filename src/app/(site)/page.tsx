@@ -147,27 +147,31 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ABOUT */}
-        <section id="about" className="border-t border-border">
+        {/* CLOSING CTA */}
+        <section className="border-t border-border">
           <div className="mx-auto max-w-3xl px-5 py-24 text-center">
-            <h2 className="text-4xl font-bold sm:text-5xl">
-              Premium peptides.
-              <br />
-              Made simple.
-            </h2>
+            <h2 className="text-4xl font-bold sm:text-5xl">Ready to shop?</h2>
 
             <p className="mt-5 text-muted-foreground">
-              Optimum Peptides is here to make finding and ordering peptides
-              easy, with a straightforward shopping experience from browse to
-              checkout.
+              Browse the full collection, or get in touch if you have a question
+              first.
             </p>
 
-            <a
-              href="/contact"
-              className="mt-8 inline-flex rounded-full bg-primary px-8 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
-            >
-              Get in touch
-            </a>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href="/shop"
+                className="inline-flex rounded-full bg-primary px-8 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
+              >
+                Browse the Collection
+              </a>
+
+              <a
+                href="/contact"
+                className="inline-flex rounded-full border border-border px-8 py-3 text-sm font-medium uppercase tracking-[0.16em] transition-colors hover:bg-white/5"
+              >
+                Get in touch
+              </a>
+            </div>
           </div>
         </section>
       </main>
