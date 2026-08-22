@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Trash2, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { Plus, Star, Trash2, X } from "lucide-react";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import ImageCropperModal from "@/components/admin/image-cropper-modal";
 import type { Product } from "@/types";
+
+const MAX_IMAGES = 5;
 
 type VariantForm = {
   id?: string;
@@ -12,6 +15,10 @@ type VariantForm = {
   price: string;
   stock: string;
 };
+
+type ImageSlot =
+  | { status: "existing"; url: string; path: string }
+  | { status: "new"; blob: Blob; previewUrl: string };
 
 function slugify(value: string) {
   return value
@@ -25,6 +32,16 @@ function emptyVariant(): VariantForm {
   return { name: "", sku: "", price: "", stock: "" };
 }
 
+function pathFromPublicUrl(url: string): string {
+  const marker = "/object/public/product-images/";
+  const index = url.indexOf(marker);
+  return index === -1 ? "" : url.slice(index + marker.length);
+}
+
+function imageSrc(slot: ImageSlot) {
+  return slot.status === "existing" ? slot.url : slot.previewUrl;
+}
+
 export default function ProductFormModal({
   product,
   onClose,
@@ -35,13 +52,22 @@ export default function ProductFormModal({
   onSaved: () => void;
 }) {
   const isEditing = !!product;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState(product?.name ?? "");
   const [slug, setSlug] = useState(product?.slug ?? "");
   const [slugTouched, setSlugTouched] = useState(isEditing);
   const [description, setDescription] = useState(product?.description ?? "");
-  const [imageUrl, setImageUrl] = useState(product?.imageUrl ?? "");
   const [isActive, setIsActive] = useState(product?.isActive ?? true);
+  const [images, setImages] = useState<ImageSlot[]>(
+    (product?.imageUrls ?? []).map((url) => ({
+      status: "existing" as const,
+      url,
+      path: pathFromPublicUrl(url),
+    })),
+  );
+  const [removedPaths, setRemovedPaths] = useState<string[]>([]);
+  const [pendingCropSrc, setPendingCropSrc] = useState<string | null>(null);
   const [variants, setVariants] = useState<VariantForm[]>(
     product?.variants.length
       ? product.variants.map((variant) => ({
@@ -59,6 +85,48 @@ export default function ProductFormModal({
   function handleNameChange(value: string) {
     setName(value);
     if (!slugTouched) setSlug(slugify(value));
+  }
+
+  function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Image is too large (max 10MB).");
+      return;
+    }
+
+    setPendingCropSrc(URL.createObjectURL(file));
+  }
+
+  function handleCropped(blob: Blob) {
+    if (pendingCropSrc) URL.revokeObjectURL(pendingCropSrc);
+    setPendingCropSrc(null);
+    setImages((current) => [
+      ...current,
+      { status: "new", blob, previewUrl: URL.createObjectURL(blob) },
+    ]);
+  }
+
+  function removeImage(index: number) {
+    setImages((current) => {
+      const slot = current[index];
+      if (slot.status === "existing" && slot.path) {
+        setRemovedPaths((paths) => [...paths, slot.path]);
+      } else if (slot.status === "new") {
+        URL.revokeObjectURL(slot.previewUrl);
+      }
+      return current.filter((_, i) => i !== index);
+    });
+  }
+
+  function makeCover(index: number) {
+    setImages((current) => {
+      const copy = [...current];
+      const [moved] = copy.splice(index, 1);
+      return [moved, ...copy];
+    });
   }
 
   function updateVariant(index: number, patch: Partial<VariantForm>) {
@@ -108,11 +176,40 @@ export default function ProductFormModal({
 
     setSaving(true);
 
+    // Upload any newly-cropped images first, so the product row is only
+    // ever written once we have final URLs for everything.
+    const finalImageUrls: string[] = [];
+    for (const slot of images) {
+      if (slot.status === "existing") {
+        finalImageUrls.push(slot.url);
+        continue;
+      }
+
+      const formData = new FormData();
+      formData.append("file", slot.blob, "image.jpg");
+      formData.append("slug", slug.trim());
+
+      const response = await fetch("/api/admin/product-images", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        setError(body.error ?? "Image upload failed.");
+        setSaving(false);
+        return;
+      }
+
+      const { url } = await response.json();
+      finalImageUrls.push(url);
+    }
+
     const productPayload = {
       name: name.trim(),
       slug: slug.trim(),
       description: description.trim(),
-      image_url: imageUrl.trim(),
+      image_urls: finalImageUrls,
       is_active: isActive,
     };
 
@@ -191,6 +288,16 @@ export default function ProductFormModal({
       }
     }
 
+    // Best-effort cleanup of removed images — the product save already
+    // succeeded, so a failure here shouldn't block the admin.
+    for (const path of removedPaths) {
+      fetch("/api/admin/product-images", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path }),
+      }).catch(() => {});
+    }
+
     setSaving(false);
     onSaved();
   }
@@ -250,14 +357,70 @@ export default function ProductFormModal({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Image URL
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-700">
+                Images ({images.length}/{MAX_IMAGES})
+              </label>
+            </div>
+
+            <div className="mt-2 grid grid-cols-5 gap-3">
+              {images.map((slot, index) => (
+                <div
+                  key={index}
+                  className="group relative aspect-square overflow-hidden rounded-lg border border-gray-200"
+                >
+                  <img
+                    src={imageSrc(slot)}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+
+                  {index === 0 && (
+                    <span className="absolute left-1 top-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                      Cover
+                    </span>
+                  )}
+
+                  <div className="absolute inset-0 flex items-center justify-center gap-1 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                    {index !== 0 && (
+                      <button
+                        type="button"
+                        onClick={() => makeCover(index)}
+                        aria-label="Set as cover"
+                        className="flex size-6 items-center justify-center rounded-full bg-white text-gray-700 hover:bg-gray-100"
+                      >
+                        <Star className="size-3.5" />
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      aria-label="Remove image"
+                      className="flex size-6 items-center justify-center rounded-full bg-white text-red-500 hover:bg-gray-100"
+                    >
+                      <Trash2 className="size-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {images.length < MAX_IMAGES && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex aspect-square items-center justify-center rounded-lg border border-dashed border-gray-300 text-gray-400 hover:border-blue-400 hover:text-blue-500"
+                >
+                  <Plus className="size-5" />
+                </button>
+              )}
+            </div>
+
             <input
-              value={imageUrl}
-              onChange={(event) => setImageUrl(event.target.value)}
-              placeholder="/images/vial.png"
-              className="mt-1 h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none focus:border-blue-400"
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileSelected}
+              className="hidden"
             />
           </div>
 
@@ -364,6 +527,17 @@ export default function ProductFormModal({
           </div>
         </form>
       </div>
+
+      {pendingCropSrc && (
+        <ImageCropperModal
+          imageSrc={pendingCropSrc}
+          onCancel={() => {
+            URL.revokeObjectURL(pendingCropSrc);
+            setPendingCropSrc(null);
+          }}
+          onCropped={handleCropped}
+        />
+      )}
     </div>
   );
 }

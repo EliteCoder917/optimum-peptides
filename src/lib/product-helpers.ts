@@ -15,7 +15,7 @@ type ProductRow = {
   name: string;
   slug: string;
   description: string | null;
-  image_url: string | null;
+  image_urls: string[] | null;
   is_active: boolean;
   product_variants: ProductVariantRow[];
 };
@@ -39,7 +39,7 @@ export function mapProduct(row: ProductRow): Product {
     name: row.name,
     slug: row.slug,
     description: row.description ?? "",
-    imageUrl: row.image_url ?? "",
+    imageUrls: row.image_urls ?? [],
     isActive: row.is_active,
     variants: row.product_variants.map(mapVariant),
   };

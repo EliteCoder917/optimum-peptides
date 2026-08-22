@@ -46,12 +46,12 @@ export default function ShopGrid({ products }: { products: Product[] }) {
                 )}
               </div>
 
-              {product.imageUrl && (
-                <div className="my-6 overflow-hidden rounded-xl bg-black/10">
+              {product.imageUrls[0] && (
+                <div className="my-6 aspect-square overflow-hidden rounded-xl bg-black/10">
                   <img
-                    src={product.imageUrl}
+                    src={product.imageUrls[0]}
                     alt={product.name}
-                    className="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
               )}

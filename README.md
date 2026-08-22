@@ -38,6 +38,8 @@ guest-only, orders are tracked by email rather than a user id.
 
 - `products` / `product_variants` — catalog. Variants hold price and stock
   (peptides are sold in multiple dosages, e.g. 5mg/10mg per product).
+  `products.image_urls` holds up to 5 image URLs (enforced by a check
+  constraint), first = cover image shown on cards.
 - `orders` / `order_items` — order_items snapshot the product name and price
   at purchase time, so historical orders stay accurate if the catalog changes.
 
@@ -146,3 +148,27 @@ find the target even though it exists. `TourProvider` works around this by
 settling `stepIndex` on its own render first, then flipping `run` on a
 separate one via a follow-up effect. Skipping that split reintroduces the
 bug.
+
+### Product images
+
+Admins upload images from their device in the product form — no image URL
+field. Each selected file goes through a crop step (`react-easy-crop`,
+locked to a 1:1 square, matching the `aspect-square` frame product cards
+use everywhere) before it's attached, so the admin controls exactly what's
+visible rather than relying on CSS `object-cover` to crop it later. Up to
+5 images per product; the first is the cover image shown on cards.
+
+Uploads go through `/api/admin/product-images` (POST to upload, DELETE to
+remove) using the service role key, rather than direct browser-to-Storage
+calls. This route isn't covered by `src/proxy.ts` (that only matches
+`/admin/*`, not `/api/*`), so it checks `admin_users` membership itself
+before touching storage. Going through a server route sidesteps needing
+RLS policies on `storage.objects` entirely — the alternative would've
+required SQL access to `storage.objects` that isn't available here (same
+limitation as every table migration).
+
+The `product-images` storage bucket (public read) already exists on the
+live project — created directly via the Storage API since bucket creation
+doesn't need SQL access, unlike the `products.image_urls` column change in
+`20260818000001_product_images.sql`, which still needs that migration run
+before saving a product with images will work.
