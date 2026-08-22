@@ -1,3 +1,5 @@
+export type VariantForm = "vial" | "pen";
+
 export type ProductVariant = {
   id: string;
   productId: string;
@@ -6,6 +8,7 @@ export type ProductVariant = {
   priceCents: number;
   stockQuantity: number;
   isActive: boolean;
+  form: VariantForm | null;
 };
 
 export type Product = {
@@ -19,9 +22,28 @@ export type Product = {
   variants: ProductVariant[];
 };
 
+// Denormalized snapshot so the cart can render without refetching product
+// data, and stays stable even if the catalog changes while it's in a cart.
 export type CartItem = {
+  variantId: string;
   productId: string;
+  productName: string;
+  productSlug: string;
+  variantName: string;
+  form: VariantForm | null;
+  priceCents: number;
+  imageUrl: string | null;
   quantity: number;
+};
+
+export type ShippingAddress = {
+  fullName: string;
+  line1: string;
+  line2: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
 };
 
 export type OrderItem = {

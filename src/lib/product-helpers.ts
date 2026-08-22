@@ -20,6 +20,7 @@ type ProductVariantRow = {
   price_cents: number;
   stock_quantity: number;
   is_active: boolean;
+  form: "vial" | "pen" | null;
 };
 
 type ProductRow = {
@@ -42,6 +43,7 @@ function mapVariant(row: ProductVariantRow): ProductVariant {
     priceCents: row.price_cents,
     stockQuantity: row.stock_quantity,
     isActive: row.is_active,
+    form: row.form,
   };
 }
 

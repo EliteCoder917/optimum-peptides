@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getProducts } from "@/lib/products";
 import { getDisplayPriceCents } from "@/lib/product-helpers";
 
@@ -47,13 +48,13 @@ export default async function Home() {
               </div>
 
               <div className="mt-9">
-                <a
+                <Link
                   href="/shop"
                   className="bg-metal-gradient inline-flex items-center rounded-full px-7 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
                 >
                   Explore Product Range
                   <span className="ml-2">→</span>
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -106,12 +107,12 @@ export default async function Home() {
               </h2>
             </div>
 
-            <a
+            <Link
               href="/shop"
               className="rounded-full border border-border px-5 py-2.5 text-sm font-medium uppercase tracking-[0.16em] transition-colors hover:bg-white/5"
             >
               Explore More
-            </a>
+            </Link>
           </div>
 
           {products.length > 0 ? (
@@ -120,9 +121,10 @@ export default async function Home() {
                 const priceCents = getDisplayPriceCents(product);
 
                 return (
-                  <article
+                  <Link
                     key={product.id}
-                    className="panel group overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-1"
+                    href={`/shop/${product.slug}`}
+                    className="panel group block overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-1"
                   >
                     {product.imageUrls[0] && (
                       <div className="p-4">
@@ -148,7 +150,7 @@ export default async function Home() {
                         )}
                       </div>
                     </div>
-                  </article>
+                  </Link>
                 );
               })}
             </div>
@@ -170,19 +172,19 @@ export default async function Home() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <a
+              <Link
                 href="/shop"
                 className="bg-metal-gradient inline-flex rounded-full px-8 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
               >
                 Browse the Collection
-              </a>
+              </Link>
 
-              <a
+              <Link
                 href="/contact"
                 className="inline-flex rounded-full border border-border px-8 py-3 text-sm font-medium uppercase tracking-[0.16em] transition-colors hover:bg-white/5"
               >
                 Get in touch
-              </a>
+              </Link>
             </div>
           </div>
         </section>

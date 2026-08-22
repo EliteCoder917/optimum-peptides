@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   getDisplayPriceCents,
   PRODUCT_CATEGORIES,
@@ -58,8 +59,9 @@ export default function ShopGrid({ products }: { products: Product[] }) {
           const priceCents = getDisplayPriceCents(product);
 
           return (
-            <article
+            <Link
               key={product.id}
+              href={`/shop/${product.slug}`}
               className="panel group flex flex-col overflow-hidden rounded-2xl p-6 transition-transform duration-300 hover:-translate-y-1"
             >
               <div className="flex items-start justify-between">
@@ -89,7 +91,7 @@ export default function ShopGrid({ products }: { products: Product[] }) {
                   {product.description}
                 </p>
               )}
-            </article>
+            </Link>
           );
         })}
       </div>

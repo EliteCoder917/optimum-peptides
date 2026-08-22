@@ -184,3 +184,36 @@ live project — created directly via the Storage API since bucket creation
 doesn't need SQL access, unlike the `products.image_urls` column change in
 `20260818000001_product_images.sql`, which still needs that migration run
 before saving a product with images will work.
+
+### Product pages, cart, and checkout
+
+Each product has a page at `/shop/[slug]` (`getProductBySlug` in
+`src/lib/products.ts`) showing the gallery, description, variant picker, and
+approved reviews (`getApprovedReviews` in `src/lib/reviews.ts` — reviews are
+already publicly readable once `status = 'approved'`, no schema change
+needed for display).
+
+`product_variants.form` (`'vial' | 'pen' | null`, added in
+`20260822000001_product_variant_form.sql`) lets a variant be tagged with its
+delivery format. The admin product form exposes it as a per-variant select.
+On the product page, `ProductPurchasePanel` only renders a Vial/Pen toggle
+when a product actually has variants in more than one format — most
+products will only ever have one (or none, e.g. the topical peptides),
+so the toggle stays hidden rather than offering a meaningless choice.
+
+Cart state (`src/components/cart-provider.tsx`) lives in `localStorage`,
+not the database — there are no customer accounts, so there's nothing to
+attach a server-side cart to. Each cart line stores a denormalized snapshot
+(name, variant, form, price, image) captured at add-to-cart time, so the
+cart renders without refetching and stays stable even if the catalog
+changes while something sits in it.
+
+Checkout (`/checkout` → `POST /api/checkout`) creates an `orders` row with
+`status: 'pending'` plus its `order_items`, then redirects to
+`/order-confirmation/[id]`. **No payment is actually collected** — there's
+no processor wired up yet (no Stripe, etc.). The API route re-validates
+every price and stock level server-side from `product_variants` (never
+trusts the cart's client-side prices), but does not decrement stock on
+order placement — stock is still only ever adjusted by an admin editing the
+product. Orders have no public RLS policy, so both the checkout route and
+the confirmation page read/write through `supabaseAdmin`.

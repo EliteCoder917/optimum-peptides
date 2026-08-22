@@ -9,12 +9,13 @@ import type { Product } from "@/types";
 
 const MAX_IMAGES = 5;
 
-type VariantForm = {
+type VariantRow = {
   id?: string;
   name: string;
   sku: string;
   price: string;
   stock: string;
+  form: "" | "vial" | "pen";
 };
 
 type ImageSlot =
@@ -29,8 +30,8 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-function emptyVariant(): VariantForm {
-  return { name: "", sku: "", price: "", stock: "" };
+function emptyVariant(): VariantRow {
+  return { name: "", sku: "", price: "", stock: "", form: "" };
 }
 
 function pathFromPublicUrl(url: string): string {
@@ -72,7 +73,7 @@ export default function ProductFormModal({
   );
   const [removedPaths, setRemovedPaths] = useState<string[]>([]);
   const [pendingCropSrc, setPendingCropSrc] = useState<string | null>(null);
-  const [variants, setVariants] = useState<VariantForm[]>(
+  const [variants, setVariants] = useState<VariantRow[]>(
     product?.variants.length
       ? product.variants.map((variant) => ({
           id: variant.id,
@@ -80,6 +81,7 @@ export default function ProductFormModal({
           sku: variant.sku,
           price: (variant.priceCents / 100).toFixed(2),
           stock: String(variant.stockQuantity),
+          form: variant.form ?? "",
         }))
       : [emptyVariant()],
   );
@@ -141,7 +143,7 @@ export default function ProductFormModal({
     });
   }
 
-  function updateVariant(index: number, patch: Partial<VariantForm>) {
+  function updateVariant(index: number, patch: Partial<VariantRow>) {
     setVariants((current) =>
       current.map((variant, i) =>
         i === index ? { ...variant, ...patch } : variant,
@@ -285,6 +287,7 @@ export default function ProductFormModal({
         sku: variant.sku.trim(),
         price_cents: Math.round(parseFloat(variant.price) * 100),
         stock_quantity: parseInt(variant.stock, 10) || 0,
+        form: variant.form || null,
       };
 
       const { error: variantError } = variant.id
@@ -488,7 +491,7 @@ export default function ProductFormModal({
               {variants.map((variant, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-[1fr_1fr_0.7fr_0.7fr_auto] gap-2 rounded-lg border border-gray-200 p-3"
+                  className="grid grid-cols-[1fr_1fr_0.7fr_0.7fr_0.8fr_auto] gap-2 rounded-lg border border-gray-200 p-3"
                 >
                   <input
                     value={variant.name}
@@ -524,6 +527,19 @@ export default function ProductFormModal({
                     inputMode="numeric"
                     className="h-9 w-full min-w-0 rounded-md border border-gray-200 px-2 text-sm outline-none focus:border-blue-400"
                   />
+                  <select
+                    value={variant.form}
+                    onChange={(event) =>
+                      updateVariant(index, {
+                        form: event.target.value as VariantRow["form"],
+                      })
+                    }
+                    className="h-9 w-full min-w-0 rounded-md border border-gray-200 px-2 text-sm outline-none focus:border-blue-400"
+                  >
+                    <option value="">No format</option>
+                    <option value="vial">Vial</option>
+                    <option value="pen">Pen</option>
+                  </select>
                   <button
                     type="button"
                     onClick={() => removeVariant(index)}

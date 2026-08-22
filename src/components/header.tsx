@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, Search, ShoppingCart, X } from "lucide-react";
 import Logo from "@/components/logo";
+import { useCart } from "@/components/cart-provider";
 
 const NAV_LINKS = [
   { label: "Browse", href: "/shop" },
@@ -13,6 +14,7 @@ const NAV_LINKS = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { itemCount } = useCart();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl">
@@ -46,13 +48,18 @@ export default function Header() {
             />
           </div>
 
-          <button
-            type="button"
-            className="flex size-10 items-center justify-center rounded-full border border-border bg-secondary/60 transition-colors hover:bg-secondary"
-            aria-label="Cart"
+          <Link
+            href="/cart"
+            className="relative flex size-10 items-center justify-center rounded-full border border-border bg-secondary/60 transition-colors hover:bg-secondary"
+            aria-label={`Cart${itemCount > 0 ? `, ${itemCount} item${itemCount === 1 ? "" : "s"}` : ""}`}
           >
             <ShoppingCart className="size-4" />
-          </button>
+            {itemCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                {itemCount > 9 ? "9+" : itemCount}
+              </span>
+            )}
+          </Link>
         </div>
 
         {/* Mobile Menu */}
@@ -91,6 +98,13 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/cart"
+              onClick={() => setOpen(false)}
+              className="rounded-lg px-3 py-3 text-sm uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              Cart{itemCount > 0 ? ` (${itemCount})` : ""}
+            </Link>
           </nav>
         </div>
       )}
