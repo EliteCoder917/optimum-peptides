@@ -1,35 +1,93 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
 import AdminTopbar from "@/components/admin/topbar";
 import FilterTabs from "@/components/admin/filter-tabs";
 import StatusBadge from "@/components/admin/status-badge";
 import EmptyState from "@/components/admin/empty-state";
+import ProductFormModal from "@/components/admin/product-form-modal";
+import { supabaseBrowser } from "@/lib/supabase/client";
+import { mapProduct } from "@/lib/product-helpers";
+import type { Product } from "@/types";
 
-type ProductRow = {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  stock: number;
-  status: "Active" | "Draft" | "Archived";
-};
+const FILTERS = ["All", "Active", "Inactive"] as const;
 
-// Replace with a real query once the products table is wired up
-const products: ProductRow[] = [];
+function formatPrice(product: Product) {
+  const prices = product.variants.map((variant) => variant.priceCents);
+  if (prices.length === 0) return "—";
 
-const FILTERS = ["All", "Active", "Draft", "Archived"] as const;
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const format = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+
+  return min === max ? format(min) : `${format(min)} – ${format(max)}`;
+}
+
+function totalStock(product: Product) {
+  return product.variants.reduce(
+    (sum, variant) => sum + variant.stockQuantity,
+    0,
+  );
+}
 
 export default function AdminProducts() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
   const [query, setQuery] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    const { data } = await supabaseBrowser
+      .from("products")
+      .select("*, product_variants(*)")
+      .order("created_at", { ascending: false });
+
+    setProducts((data ?? []).map(mapProduct));
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    // Standard fetch-on-mount — there's no non-effect way to load remote
+    // data into local state here without a data-fetching library.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchProducts();
+  }, [fetchProducts]);
 
   const visible = products.filter(
     (product) =>
-      (filter === "All" || product.status === filter) &&
+      (filter === "All" ||
+        (filter === "Active" ? product.isActive : !product.isActive)) &&
       product.name.toLowerCase().includes(query.toLowerCase()),
   );
+
+  function openCreateModal() {
+    setEditingProduct(null);
+    setModalOpen(true);
+  }
+
+  function openEditModal(product: Product) {
+    setEditingProduct(product);
+    setModalOpen(true);
+  }
+
+  function handleSaved() {
+    setModalOpen(false);
+    setEditingProduct(null);
+    fetchProducts();
+  }
+
+  async function handleDelete(product: Product) {
+    if (!window.confirm(`Delete "${product.name}"? This cannot be undone.`)) {
+      return;
+    }
+
+    await supabaseBrowser.from("products").delete().eq("id", product.id);
+    fetchProducts();
+  }
 
   return (
     <>
@@ -47,7 +105,9 @@ export default function AdminProducts() {
             options={FILTERS.map((label) => ({
               label,
               count: products.filter(
-                (p) => label === "All" || p.status === label,
+                (p) =>
+                  label === "All" ||
+                  (label === "Active" ? p.isActive : !p.isActive),
               ).length,
             }))}
             active={filter}
@@ -56,6 +116,7 @@ export default function AdminProducts() {
 
           <button
             type="button"
+            onClick={openCreateModal}
             className="flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-800"
           >
             <Plus className="size-4" />
@@ -82,7 +143,6 @@ export default function AdminProducts() {
             <thead className="border-b border-gray-200 text-xs uppercase tracking-wide text-gray-500">
               <tr>
                 <th className="px-6 py-3 font-medium">Product</th>
-                <th className="px-6 py-3 font-medium">Category</th>
                 <th className="px-6 py-3 font-medium">Price</th>
                 <th className="px-6 py-3 font-medium">Stock</th>
                 <th className="px-6 py-3 font-medium">Status</th>
@@ -95,33 +155,40 @@ export default function AdminProducts() {
                   <td className="px-6 py-4 font-medium text-gray-900">
                     {product.name}
                   </td>
-                  <td className="px-6 py-4 text-gray-500">
-                    {product.category}
+                  <td className="px-6 py-4 text-gray-900">
+                    {formatPrice(product)}
                   </td>
                   <td className="px-6 py-4 text-gray-900">
-                    ${product.price.toFixed(2)}
+                    {totalStock(product)}
                   </td>
-                  <td className="px-6 py-4 text-gray-900">{product.stock}</td>
                   <td className="px-6 py-4">
-                    <StatusBadge
-                      tone={
-                        product.status === "Active"
-                          ? "green"
-                          : product.status === "Draft"
-                            ? "gray"
-                            : "red"
-                      }
-                    >
-                      {product.status}
+                    <StatusBadge tone={product.isActive ? "green" : "gray"}>
+                      {product.isActive ? "Active" : "Inactive"}
                     </StatusBadge>
                   </td>
-                  <td className="px-6 py-4 text-right text-gray-400">···</td>
+                  <td className="px-6 py-4 text-right">
+                    <button
+                      type="button"
+                      onClick={() => openEditModal(product)}
+                      className="text-xs font-medium text-blue-600 hover:text-blue-700"
+                    >
+                      Edit
+                    </button>
+                    <span className="mx-2 text-gray-300">|</span>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(product)}
+                      className="text-xs font-medium text-red-500 hover:text-red-600"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          {visible.length === 0 && (
+          {!loading && visible.length === 0 && (
             <EmptyState
               title="No products yet"
               description="Add your first product to start building your catalog."
@@ -129,6 +196,14 @@ export default function AdminProducts() {
           )}
         </div>
       </div>
+
+      {modalOpen && (
+        <ProductFormModal
+          product={editingProduct}
+          onClose={() => setModalOpen(false)}
+          onSaved={handleSaved}
+        />
+      )}
     </>
   );
 }

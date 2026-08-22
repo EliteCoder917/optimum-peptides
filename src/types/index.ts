@@ -1,10 +1,21 @@
+export type ProductVariant = {
+  id: string;
+  productId: string;
+  name: string;
+  sku: string;
+  priceCents: number;
+  stockQuantity: number;
+  isActive: boolean;
+};
+
 export type Product = {
   id: string;
   name: string;
   slug: string;
-  priceCents: number;
   description: string;
   imageUrl: string;
+  isActive: boolean;
+  variants: ProductVariant[];
 };
 
 export type CartItem = {

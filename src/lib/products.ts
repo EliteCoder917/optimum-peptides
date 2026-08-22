@@ -1,16 +1,16 @@
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { mapProduct } from "@/lib/product-helpers";
 import type { Product } from "@/types";
 
-const MOCK_PRODUCTS: Product[] = [
-  {
-    id: "1",
-    name: "Sample Peptide",
-    slug: "sample-peptide",
-    priceCents: 4999,
-    description: "Placeholder product until the real catalog is wired up.",
-    imageUrl: "/placeholder.svg",
-  },
-];
-
+// Public catalog — active products only, for the storefront.
 export async function getProducts(): Promise<Product[]> {
-  return MOCK_PRODUCTS;
+  const supabase = await createSupabaseServerClient();
+
+  const { data } = await supabase
+    .from("products")
+    .select("*, product_variants(*)")
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
+
+  return (data ?? []).map(mapProduct);
 }

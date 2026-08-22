@@ -1,16 +1,9 @@
-const collection = [
-  "Collection One",
-  "Collection Two",
-  "Collection Three",
-  "Collection Four",
-  "Collection Five",
-  "Collection Six",
-  "Collection Seven",
-  "Collection Eight",
-  "Collection Nine",
-];
+import { getProducts } from "@/lib/products";
+import { getDisplayPriceCents } from "@/lib/product-helpers";
 
-export default function Home() {
+export default async function Home() {
+  const products = (await getProducts()).slice(0, 6);
+
   return (
     <div id="top" className="min-h-screen bg-background">
       <main>
@@ -121,30 +114,49 @@ export default function Home() {
             </a>
           </div>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {collection.map((item) => (
-              <article
-                key={item}
-                className="panel group overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-1"
-              >
-                <div className="p-4">
-                  <div className="overflow-hidden rounded-xl">
-                    <img
-                      src="/images/vial.png"
-                      alt="Peptide vial"
-                      className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                </div>
+          {products.length > 0 ? (
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {products.map((product) => {
+                const priceCents = getDisplayPriceCents(product);
 
-                <div className="px-6 pb-6 pt-1">
-                  <div className="border-t border-border pt-5 text-xs uppercase tracking-[0.18em] text-primary">
-                    Popular choices
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                return (
+                  <article
+                    key={product.id}
+                    className="panel group overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-1"
+                  >
+                    {product.imageUrl && (
+                      <div className="p-4">
+                        <div className="overflow-hidden rounded-xl">
+                          <img
+                            src={product.imageUrl}
+                            alt={product.name}
+                            className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="px-6 pb-6 pt-1">
+                      <div className="border-t border-border pt-5">
+                        <h3 className="text-lg font-semibold">
+                          {product.name}
+                        </h3>
+                        {priceCents !== null && (
+                          <p className="mt-1 text-xs uppercase tracking-[0.18em] text-primary">
+                            From ${(priceCents / 100).toFixed(2)}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="mt-12 text-sm text-muted-foreground">
+              No products yet — check back soon.
+            </p>
+          )}
         </section>
 
         {/* CLOSING CTA */}
