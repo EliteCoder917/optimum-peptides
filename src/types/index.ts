@@ -14,6 +14,7 @@ export type Product = {
   slug: string;
   description: string;
   imageUrls: string[];
+  categories: string[];
   isActive: boolean;
   variants: ProductVariant[];
 };

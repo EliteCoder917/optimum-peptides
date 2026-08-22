@@ -1,28 +1,56 @@
 "use client";
 
 import { useState } from "react";
-import { getDisplayPriceCents } from "@/lib/product-helpers";
+import {
+  getDisplayPriceCents,
+  PRODUCT_CATEGORIES,
+} from "@/lib/product-helpers";
 import type { Product } from "@/types";
 
 export default function ShopGrid({ products }: { products: Product[] }) {
   const [query, setQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState<string>("All");
+
+  const categoriesWithProducts = PRODUCT_CATEGORIES.filter((category) =>
+    products.some((product) => product.categories.includes(category)),
+  );
 
   const visible = products.filter(
     (product) =>
-      query.trim() === "" ||
-      product.name.toLowerCase().includes(query.toLowerCase()),
+      (activeCategory === "All" ||
+        product.categories.includes(activeCategory)) &&
+      (query.trim() === "" ||
+        product.name.toLowerCase().includes(query.toLowerCase())),
   );
 
   return (
     <>
-      <div className="flex justify-end">
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Filter..."
-          aria-label="Filter collection"
-          className="h-10 w-48 rounded-full border border-border bg-secondary/60 px-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
-        />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap gap-2">
+          {["All", ...categoriesWithProducts].map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`rounded-full border px-4 py-2 text-[11px] uppercase tracking-[0.16em] transition-colors ${
+                activeCategory === category
+                  ? "border-primary/50 bg-primary/15 text-primary"
+                  : "border-border bg-secondary/40 text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        <div className="ml-auto">
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Filter..."
+            aria-label="Filter collection"
+            className="h-10 w-48 rounded-full border border-border bg-secondary/60 px-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
+          />
+        </div>
       </div>
 
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

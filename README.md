@@ -39,13 +39,25 @@ guest-only, orders are tracked by email rather than a user id.
 - `products` / `product_variants` — catalog. Variants hold price and stock
   (peptides are sold in multiple dosages, e.g. 5mg/10mg per product).
   `products.image_urls` holds up to 5 image URLs (enforced by a check
-  constraint), first = cover image shown on cards.
+  constraint), first = cover image shown on cards. `products.categories` is
+  an array too, not a single column — several peptides genuinely belong to
+  more than one (BPC-157 is Recovery, Gut Health, _and_ Joint Pain), and the
+  fixed category list lives in `PRODUCT_CATEGORIES`
+  (`src/lib/product-helpers.ts`).
 - `orders` / `order_items` — order_items snapshot the product name and price
   at purchase time, so historical orders stay accurate if the catalog changes.
 
 Row Level Security is on for every table. `products`/`product_variants` allow
-public read of active rows; `orders`/`order_items` have no public policies —
-they're only reachable through server-side code using the service role key.
+public read of active rows and full read/write for admins (`is_admin()`);
+`orders`/`order_items` have no public policies — they're only reachable
+through server-side code using the service role key.
+
+Watch out for this one if you're adding a new admin-writable table: the
+admin insert/update/delete policies on `products`/`product_variants` were
+added without a matching admin _select_ policy, so admins could create
+products but not see their own drafts (RLS silently fell back to the public
+"active only" policy). Fixed in `20260818000003_admin_read_products.sql` —
+worth double-checking new tables don't repeat this.
 
 Three Supabase clients, each with a distinct purpose:
 

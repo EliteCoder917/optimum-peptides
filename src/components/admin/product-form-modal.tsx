@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Plus, Star, Trash2, X } from "lucide-react";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import ImageCropperModal from "@/components/admin/image-cropper-modal";
+import { PRODUCT_CATEGORIES } from "@/lib/product-helpers";
 import type { Product } from "@/types";
 
 const MAX_IMAGES = 5;
@@ -58,6 +59,9 @@ export default function ProductFormModal({
   const [slug, setSlug] = useState(product?.slug ?? "");
   const [slugTouched, setSlugTouched] = useState(isEditing);
   const [description, setDescription] = useState(product?.description ?? "");
+  const [categories, setCategories] = useState<string[]>(
+    product?.categories ?? [],
+  );
   const [isActive, setIsActive] = useState(product?.isActive ?? true);
   const [images, setImages] = useState<ImageSlot[]>(
     (product?.imageUrls ?? []).map((url) => ({
@@ -85,6 +89,14 @@ export default function ProductFormModal({
   function handleNameChange(value: string) {
     setName(value);
     if (!slugTouched) setSlug(slugify(value));
+  }
+
+  function toggleCategory(category: string) {
+    setCategories((current) =>
+      current.includes(category)
+        ? current.filter((c) => c !== category)
+        : [...current, category],
+    );
   }
 
   function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
@@ -210,6 +222,7 @@ export default function ProductFormModal({
       slug: slug.trim(),
       description: description.trim(),
       image_urls: finalImageUrls,
+      categories,
       is_active: isActive,
     };
 
@@ -354,6 +367,28 @@ export default function ProductFormModal({
               onChange={(event) => setDescription(event.target.value)}
               className="mt-1 min-h-20 w-full resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-blue-400"
             />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              Categories
+            </label>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {PRODUCT_CATEGORIES.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => toggleCategory(category)}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                    categories.includes(category)
+                      ? "border-gray-900 bg-gray-900 text-white"
+                      : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div>

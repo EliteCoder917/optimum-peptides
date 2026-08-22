@@ -1,5 +1,17 @@
 import type { Product, ProductVariant } from "@/types";
 
+export const PRODUCT_CATEGORIES = [
+  "Weight Loss",
+  "Recovery",
+  "Performance",
+  "Libido",
+  "Gut Health",
+  "Skincare",
+  "Anti-Aging / Longevity",
+  "Brain Function / Cognitive Support",
+  "Joint Pain / Tissue Repair",
+] as const;
+
 type ProductVariantRow = {
   id: string;
   product_id: string;
@@ -16,6 +28,7 @@ type ProductRow = {
   slug: string;
   description: string | null;
   image_urls: string[] | null;
+  categories: string[] | null;
   is_active: boolean;
   product_variants: ProductVariantRow[];
 };
@@ -40,6 +53,7 @@ export function mapProduct(row: ProductRow): Product {
     slug: row.slug,
     description: row.description ?? "",
     imageUrls: row.image_urls ?? [],
+    categories: row.categories ?? [],
     isActive: row.is_active,
     variants: row.product_variants.map(mapVariant),
   };
