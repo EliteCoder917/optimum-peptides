@@ -29,7 +29,7 @@ export default function AdminSidebar({ email }: { email: string }) {
   }
 
   return (
-    <aside className="flex h-screen w-64 shrink-0 flex-col bg-gray-950 text-gray-300">
+    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col overflow-y-auto bg-gray-950 text-gray-300">
       <div className="px-6 py-6">
         <p className="text-lg font-semibold tracking-tight text-white">
           Optimum <span className="text-blue-400">Peptides</span>
