@@ -49,7 +49,7 @@ export default async function Home() {
               <div className="mt-9">
                 <a
                   href="/shop"
-                  className="inline-flex items-center rounded-full bg-primary px-7 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
+                  className="bg-metal-gradient inline-flex items-center rounded-full px-7 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
                 >
                   Explore Product Range
                   <span className="ml-2">→</span>
@@ -172,7 +172,7 @@ export default async function Home() {
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <a
                 href="/shop"
-                className="inline-flex rounded-full bg-primary px-8 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
+                className="bg-metal-gradient inline-flex rounded-full px-8 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
               >
                 Browse the Collection
               </a>

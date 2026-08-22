@@ -72,7 +72,7 @@ export default function About() {
 
             <a
               href="/contact"
-              className="mt-8 inline-flex rounded-full bg-primary px-8 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
+              className="bg-metal-gradient mt-8 inline-flex rounded-full px-8 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
             >
               Contact Us
             </a>

@@ -69,7 +69,7 @@ export default function Footer() {
 
           <Link
             href="/contact"
-            className="mt-4 inline-flex rounded-md bg-primary px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-90"
+            className="bg-metal-gradient mt-4 inline-flex rounded-md px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-90"
           >
             Contact Us
           </Link>

@@ -72,7 +72,7 @@ export default function Contact() {
 
               <button
                 type="submit"
-                className="mt-4 w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-90"
+                className="bg-metal-gradient mt-4 w-full rounded-md px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-90"
               >
                 Send Message
               </button>

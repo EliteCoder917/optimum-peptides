@@ -29,6 +29,8 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-steel: var(--steel);
+  --color-steel-highlight: var(--steel-highlight);
+  --color-steel-shadow: var(--steel-shadow);
   --color-glow: var(--glow);
 
   --font-display:
@@ -67,14 +69,26 @@
   --input: oklch(0.27 0.02 235);
   --ring: oklch(0.78 0.13 210);
 
-  --steel: oklch(0.86 0.008 240);
+  /* Sampled directly from the brand logo's chrome DNA mark. */
+  --steel-highlight: oklch(0.97 0.003 229);
+  --steel: oklch(0.5 0.008 242);
+  --steel-shadow: oklch(0.24 0.005 220);
   --glow: oklch(0.85 0.13 205);
 
   --gradient-brand: linear-gradient(
     120deg,
-    oklch(0.86 0.008 240),
-    oklch(0.78 0.13 210) 55%,
-    oklch(0.62 0.15 230)
+    oklch(0.97 0.003 229) 0%,
+    oklch(0.5 0.008 242) 45%,
+    oklch(0.78 0.13 210) 100%
+  );
+
+  /* Stays in a lighter register throughout (unlike --steel-shadow) so
+     dark button text stays legible across the whole gradient. */
+  --gradient-metal: linear-gradient(
+    135deg,
+    oklch(0.97 0.003 229) 0%,
+    oklch(0.72 0.006 238) 50%,
+    oklch(0.6 0.008 235) 100%
   );
 
   --gradient-panel: linear-gradient(
@@ -117,6 +131,14 @@
   background-image: var(--gradient-brand);
   background-clip: text;
   color: transparent;
+}
+
+@utility bg-metal-gradient {
+  background-image: var(--gradient-metal);
+}
+
+@utility border-metal {
+  border: 1px solid oklch(0.6 0.02 240 / 0.5);
 }
 
 @utility panel {
