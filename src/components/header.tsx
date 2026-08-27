@@ -18,9 +18,14 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto grid h-20 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-5">
-        {/* Logo */}
-        <Logo className="justify-self-start" />
+      {/* Three flex tracks rather than a grid: the nav and desktop search are
+          display:none on small screens, and a grid would silently reflow the
+          remaining items into the wrong columns. Equal flex-1 sides keep the
+          nav optically centred on desktop. */}
+      <div className="mx-auto flex h-20 max-w-7xl items-center gap-3 px-5">
+        <div className="flex min-w-0 flex-1 items-center">
+          <Logo />
+        </div>
 
         {/* Navigation */}
         <nav className="hidden items-center gap-9 lg:flex">
@@ -35,22 +40,22 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Search + Cart */}
-        <div className="hidden items-center justify-self-end gap-3 md:flex">
-          <div className="relative">
+        {/* Search + Cart + Menu */}
+        <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3">
+          <div className="relative hidden md:block">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
             <input
               type="text"
               placeholder="Search peptides…"
               aria-label="Search peptides"
-              className="h-10 w-56 rounded-full border border-border bg-secondary/60 pl-9 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+              className="h-10 w-44 rounded-full border border-border bg-secondary/60 pl-9 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary lg:w-56"
             />
           </div>
 
           <Link
             href="/cart"
-            className="relative flex size-10 items-center justify-center rounded-full border border-border bg-secondary/60 transition-colors hover:bg-secondary"
+            className="relative flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-secondary/60 transition-colors hover:bg-secondary"
             aria-label={`Cart${itemCount > 0 ? `, ${itemCount} item${itemCount === 1 ? "" : "s"}` : ""}`}
           >
             <ShoppingCart className="size-4" />
@@ -60,23 +65,23 @@ export default function Header() {
               </span>
             )}
           </Link>
-        </div>
 
-        {/* Mobile Menu */}
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          className="ml-auto rounded-full border border-border p-2 text-foreground md:hidden"
-          aria-label="Toggle menu"
-        >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border text-foreground lg:hidden"
+            aria-label="Toggle menu"
+            aria-expanded={open}
+          >
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Navigation */}
       {open && (
-        <div className="border-t border-border bg-background px-5 py-4 md:hidden">
-          <div className="relative mb-4">
+        <div className="border-t border-border bg-background px-5 py-4 lg:hidden">
+          <div className="relative mb-4 md:hidden">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
             <input
@@ -87,6 +92,7 @@ export default function Header() {
             />
           </div>
 
+          {/* Cart lives in the header bar itself, not in here. */}
           <nav className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <Link
@@ -98,13 +104,6 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
-            <Link
-              href="/cart"
-              onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-3 text-sm uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-            >
-              Cart{itemCount > 0 ? ` (${itemCount})` : ""}
-            </Link>
           </nav>
         </div>
       )}

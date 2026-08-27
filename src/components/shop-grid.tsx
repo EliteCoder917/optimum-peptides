@@ -26,31 +26,35 @@ export default function ShopGrid({ products }: { products: Product[] }) {
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-4 lg:flex-row-reverse lg:items-center lg:gap-6">
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search the catalogue…"
+          aria-label="Search the catalogue"
+          className="h-10 w-full shrink-0 rounded-full border border-border bg-secondary/60 px-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary lg:w-56"
+        />
+
+        {/* Below lg these scroll horizontally instead of wrapping: nine
+            long labels stacked one per row pushed the grid off-screen.
+            Bleeds to the viewport edge so the strip reads as scrollable. */}
+        <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:min-w-0 lg:flex-1 lg:flex-wrap lg:overflow-visible lg:px-0 lg:pb-0">
           {["All", ...categoriesWithProducts].map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`rounded-full border px-4 py-2 text-[11px] uppercase tracking-[0.16em] transition-colors ${
+              className={`shrink-0 whitespace-nowrap rounded-full border px-3.5 py-2 text-[11px] uppercase tracking-[0.12em] transition-colors sm:px-4 sm:tracking-[0.16em] ${
                 activeCategory === category
                   ? "border-primary/50 bg-primary/15 text-primary"
                   : "border-border bg-secondary/40 text-muted-foreground hover:text-foreground"
               }`}
             >
-              {category}
+              {/* "Metabolic Research" → "Metabolic": the page is already
+                  headed "Research Catalogue", so the suffix on every pill
+                  is dead width. */}
+              {category.replace(/ Research$/, "")}
             </button>
           ))}
-        </div>
-
-        <div className="ml-auto">
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Filter..."
-            aria-label="Filter collection"
-            className="h-10 w-48 rounded-full border border-border bg-secondary/60 px-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
-          />
         </div>
       </div>
 
