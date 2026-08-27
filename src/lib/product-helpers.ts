@@ -1,15 +1,19 @@
 import type { Product, ProductVariant } from "@/types";
 
+// Research domains, not benefit claims. The previous names ("Weight Loss",
+// "Libido", "Joint Pain"…) each asserted a human therapeutic effect, which
+// is exactly what pushes a research chemical into being an unlicensed
+// medicine by presentation. These describe the field of study instead.
 export const PRODUCT_CATEGORIES = [
-  "Weight Loss",
-  "Recovery",
-  "Performance",
-  "Libido",
-  "Gut Health",
-  "Skincare",
-  "Anti-Aging / Longevity",
-  "Brain Function / Cognitive Support",
-  "Joint Pain / Tissue Repair",
+  "Metabolic Research",
+  "Tissue Repair Research",
+  "Growth Factor Research",
+  "Endocrine Research",
+  "Gastrointestinal Research",
+  "Dermatological Research",
+  "Cellular & Longevity Research",
+  "Neurological Research",
+  "Musculoskeletal Research",
 ] as const;
 
 type ProductVariantRow = {
@@ -31,6 +35,7 @@ type ProductRow = {
   image_urls: string[] | null;
   categories: string[] | null;
   is_active: boolean;
+  regulatory_class: "ruo" | "pom" | null;
   product_variants: ProductVariantRow[];
 };
 
@@ -57,6 +62,7 @@ export function mapProduct(row: ProductRow): Product {
     imageUrls: row.image_urls ?? [],
     categories: row.categories ?? [],
     isActive: row.is_active,
+    regulatoryClass: row.regulatory_class ?? "ruo",
     variants: row.product_variants.map(mapVariant),
   };
 }

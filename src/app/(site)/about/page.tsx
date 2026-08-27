@@ -1,19 +1,21 @@
+import ResearchNotice from "@/components/research-notice";
+
 const values = [
   {
-    title: "Curated Selection",
-    body: "A focused catalog of blends, singles, kits, and accessories.",
+    title: "Research Use Only",
+    body: "Every compound is supplied strictly for in-vitro laboratory research. We make no therapeutic claims and provide no guidance on use in humans or animals.",
   },
   {
-    title: "Simple Ordering",
-    body: "Browse, add to cart, and checkout — no account required.",
+    title: "Documented Listings",
+    body: "Each listing states the compound's molecular class and published mechanism of action, with the state of the evidence described honestly.",
   },
   {
-    title: "Fast Shipping",
-    body: "Orders are packed and shipped quickly, with tracking included.",
+    title: "Straightforward Ordering",
+    body: "Browse by research domain, order without an account, and get tracked dispatch on every shipment.",
   },
   {
-    title: "Real Support",
-    body: "Have a question? Reach out and a real person will help.",
+    title: "Technical Support",
+    body: "Questions about a listing, a specification, or an order? Reach out and a real person will help.",
   },
 ];
 
@@ -30,14 +32,14 @@ export default function About() {
 
             <h1 className="mt-3 text-4xl font-bold sm:text-5xl">
               <span className="text-brand-gradient">
-                Peptides, made simple.
+                A research supply catalogue.
               </span>
             </h1>
 
             <p className="mt-5 text-muted-foreground">
-              Optimum Peptides exists to make finding and ordering peptides
-              straightforward — a focused catalog, an easy checkout, and support
-              when you need it.
+              Optimum Peptides supplies research chemicals to laboratories and
+              qualified researchers. We list what a compound is and what the
+              published literature says about how it works — nothing more.
             </p>
           </div>
         </section>
@@ -57,17 +59,22 @@ export default function About() {
               </div>
             ))}
           </div>
+
+          <div className="mx-auto mt-14 max-w-3xl">
+            <ResearchNotice />
+          </div>
         </section>
 
         {/* CTA */}
         <section className="border-t border-border">
           <div className="mx-auto max-w-3xl px-5 py-24 text-center">
             <h2 className="text-3xl font-bold sm:text-4xl">
-              Questions? We are happy to help.
+              Questions about a listing?
             </h2>
 
             <p className="mt-4 text-muted-foreground">
-              Reach out and we will get back to you.
+              Reach out and we will get back to you. Please note we cannot
+              advise on use in humans or animals.
             </p>
 
             <a

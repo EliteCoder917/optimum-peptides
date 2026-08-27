@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getProducts } from "@/lib/products";
 import { getDisplayPriceCents } from "@/lib/product-helpers";
+import ResearchNotice from "@/components/research-notice";
 
 export default async function Home() {
   const products = (await getProducts()).slice(0, 6);
@@ -24,20 +25,26 @@ export default async function Home() {
             {/* LEFT SIDE */}
             <div>
               <span className="inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-[11px] uppercase tracking-[0.24em] text-primary">
-                Premium Peptides
+                Research Chemicals
               </span>
 
               <h1 className="mt-6 text-5xl font-bold leading-[0.95] sm:text-7xl lg:text-8xl">
-                <span className="text-brand-gradient">Premium Peptides</span>
+                <span className="text-brand-gradient">Research Peptides</span>
               </h1>
 
               <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
-                Optimum Peptides is your straightforward source for high-quality
-                peptides, with easy ordering and fast shipping.
+                A reference catalogue of peptides supplied for in-vitro
+                laboratory research. Every compound is listed with its
+                molecular class and published mechanism of action, so you can
+                find what your work calls for.
+              </p>
+
+              <p className="mt-4 max-w-lg text-xs uppercase leading-relaxed tracking-[0.1em] text-amber-500/90">
+                Research use only — not for human or veterinary consumption.
               </p>
 
               <div className="mt-8 grid max-w-lg grid-cols-2 gap-3 sm:grid-cols-4">
-                {["Blends", "Singles", "Kits", "Accessories"].map((chip) => (
+                {["Lyophilised", "Analytical", "Documented", "Traceable"].map((chip) => (
                   <div
                     key={chip}
                     className="panel rounded-xl px-3 py-3 text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
@@ -77,11 +84,11 @@ export default async function Home() {
         <section className="border-y border-border bg-card/40">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-6 px-5 py-6">
             {[
-              "Fast shipping",
+              "Research use only",
+              "Documented catalogue",
               "Secure checkout",
-              "Wide selection",
-              "Easy returns",
-              "Friendly support",
+              "Tracked dispatch",
+              "Technical support",
             ].map((item) => (
               <div
                 key={item}
@@ -99,11 +106,11 @@ export default async function Home() {
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-[11px] uppercase tracking-[0.24em] text-primary">
-                Our Collection
+                Catalogue
               </p>
 
               <h2 className="mt-3 text-4xl font-bold sm:text-5xl">
-                Explore our collection
+                Browse the catalogue
               </h2>
             </div>
 
@@ -159,16 +166,22 @@ export default async function Home() {
               No products yet — check back soon.
             </p>
           )}
+
+          <div className="mt-12">
+            <ResearchNotice />
+          </div>
         </section>
 
         {/* CLOSING CTA */}
         <section className="border-t border-border">
           <div className="mx-auto max-w-3xl px-5 py-24 text-center">
-            <h2 className="text-4xl font-bold sm:text-5xl">Ready to shop?</h2>
+            <h2 className="text-4xl font-bold sm:text-5xl">
+              Looking for a specific compound?
+            </h2>
 
             <p className="mt-5 text-muted-foreground">
-              Browse the full collection, or get in touch if you have a question
-              first.
+              Browse the full catalogue, or get in touch if you have a technical
+              question about a listing.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -176,7 +189,7 @@ export default async function Home() {
                 href="/shop"
                 className="bg-metal-gradient inline-flex rounded-full px-8 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
               >
-                Browse the Collection
+                Browse the Catalogue
               </Link>
 
               <Link

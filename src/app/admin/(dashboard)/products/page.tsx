@@ -184,33 +184,37 @@ export default function AdminProducts() {
                     {totalStock(product)}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2.5">
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={product.isActive}
-                        aria-label={
-                          product.isActive
-                            ? `Deactivate ${product.name}`
-                            : `Activate ${product.name}`
-                        }
-                        onClick={() => handleToggleActive(product)}
-                        className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
-                          product.isActive ? "bg-green-500" : "bg-gray-300"
-                        }`}
-                      >
-                        <span
-                          className={`inline-block size-3.5 transform rounded-full bg-white shadow transition-transform ${
+                    {product.regulatoryClass === "pom" ? (
+                      <StatusBadge tone="red">POM — not sellable</StatusBadge>
+                    ) : (
+                      <div className="flex items-center gap-2.5">
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={product.isActive}
+                          aria-label={
                             product.isActive
-                              ? "translate-x-[18px]"
-                              : "translate-x-1"
+                              ? `Deactivate ${product.name}`
+                              : `Activate ${product.name}`
+                          }
+                          onClick={() => handleToggleActive(product)}
+                          className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
+                            product.isActive ? "bg-green-500" : "bg-gray-300"
                           }`}
-                        />
-                      </button>
-                      <StatusBadge tone={product.isActive ? "green" : "gray"}>
-                        {product.isActive ? "Active" : "Inactive"}
-                      </StatusBadge>
-                    </div>
+                        >
+                          <span
+                            className={`inline-block size-3.5 transform rounded-full bg-white shadow transition-transform ${
+                              product.isActive
+                                ? "translate-x-[18px]"
+                                : "translate-x-1"
+                            }`}
+                          />
+                        </button>
+                        <StatusBadge tone={product.isActive ? "green" : "gray"}>
+                          {product.isActive ? "Active" : "Inactive"}
+                        </StatusBadge>
+                      </div>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button

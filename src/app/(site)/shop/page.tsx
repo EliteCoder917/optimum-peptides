@@ -1,5 +1,6 @@
 import { getProducts } from "@/lib/products";
 import ShopGrid from "@/components/shop-grid";
+import ResearchNotice from "@/components/research-notice";
 
 export default async function Shop() {
   const products = await getProducts();
@@ -23,19 +24,23 @@ export default async function Shop() {
             </p>
 
             <h1 className="mt-3 text-5xl font-bold sm:text-6xl">
-              <span className="text-brand-gradient">Our Collection</span>
+              <span className="text-brand-gradient">Research Catalogue</span>
             </h1>
 
             <p className="mt-5 max-w-lg text-muted-foreground">
-              Explore our range of peptides and browse by category to find
-              exactly what you need.
+              Browse compounds by research domain. All items are supplied for
+              in-vitro laboratory research only.
             </p>
           </div>
         </section>
 
-        {/* COLLECTION */}
+        {/* CATALOGUE */}
         <section className="mx-auto max-w-7xl px-5 py-12">
-          <ShopGrid products={products} />
+          <ResearchNotice />
+
+          <div className="mt-10">
+            <ShopGrid products={products} />
+          </div>
         </section>
       </main>
     </div>

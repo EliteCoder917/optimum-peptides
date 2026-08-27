@@ -4,6 +4,7 @@ import type { ShippingAddress } from "@/types";
 
 type CheckoutPayload = {
   items: { variantId: string; quantity: number }[];
+  researchUseConfirmed: boolean;
   customerEmail: string;
   shippingAddress: ShippingAddress;
 };
@@ -13,6 +14,16 @@ export async function POST(request: Request) {
 
   if (!body || !Array.isArray(body.items) || body.items.length === 0) {
     return NextResponse.json({ error: "Cart is empty." }, { status: 400 });
+  }
+
+  // Re-checked server-side, not just in the form: this declaration is the
+  // record that the sale was made on research terms, so an order must not
+  // be creatable without it.
+  if (body.researchUseConfirmed !== true) {
+    return NextResponse.json(
+      { error: "The research-use declaration must be accepted." },
+      { status: 400 },
+    );
   }
 
   if (!body.customerEmail?.trim()) {
@@ -45,7 +56,9 @@ export async function POST(request: Request) {
 
     const { data: variant, error: variantError } = await supabaseAdmin
       .from("product_variants")
-      .select("id, name, price_cents, stock_quantity, is_active, products(name, is_active)")
+      .select(
+        "id, name, price_cents, stock_quantity, is_active, products(name, is_active, regulatory_class)",
+      )
       .eq("id", item.variantId)
       .maybeSingle();
 
@@ -63,6 +76,18 @@ export async function POST(request: Request) {
     if (!variant.is_active || !product?.is_active) {
       return NextResponse.json(
         { error: `"${product?.name ?? variant.name}" is no longer available.` },
+        { status: 400 },
+      );
+    }
+
+    // Backstop for the public-query filter. A prescription-only medicine
+    // must never be sellable, even if a stale cart or a crafted request
+    // carries its variant id.
+    if (product.regulatory_class === "pom") {
+      return NextResponse.json(
+        {
+          error: `"${product.name}" is a prescription-only medicine and cannot be supplied through this site.`,
+        },
         { status: 400 },
       );
     }
@@ -97,6 +122,8 @@ export async function POST(request: Request) {
       shipping_address: body.shippingAddress,
       subtotal_cents: subtotalCents,
       total_cents: subtotalCents,
+      research_use_confirmed: true,
+      research_use_confirmed_at: new Date().toISOString(),
     })
     .select("id")
     .single();

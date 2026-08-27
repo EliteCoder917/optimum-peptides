@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/components/cart-provider";
+import ResearchNotice from "@/components/research-notice";
 
 function formatPrice(cents: number) {
   return `$${(cents / 100).toFixed(2)}`;
@@ -20,13 +21,22 @@ export default function CheckoutPage() {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [postalCode, setPostalCode] = useState("");
-  const [country, setCountry] = useState("United States");
+  const [country, setCountry] = useState("United Kingdom");
+  const [researchUseConfirmed, setResearchUseConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
+
+    if (!researchUseConfirmed) {
+      setError(
+        "You must confirm the research-use declaration before ordering.",
+      );
+      return;
+    }
+
     setSubmitting(true);
 
     const response = await fetch("/api/checkout", {
@@ -37,6 +47,7 @@ export default function CheckoutPage() {
           variantId: item.variantId,
           quantity: item.quantity,
         })),
+        researchUseConfirmed,
         customerEmail: email,
         shippingAddress: {
           fullName,
@@ -71,7 +82,7 @@ export default function CheckoutPage() {
             href="/shop"
             className="mt-5 inline-flex rounded-full bg-metal-gradient px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
           >
-            Browse the Collection
+            Browse the Catalogue
           </Link>
         </div>
       </div>
@@ -167,12 +178,47 @@ export default function CheckoutPage() {
               />
             </div>
 
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-amber-500">
+                Research use declaration
+              </p>
+
+              <label className="mt-3 flex cursor-pointer gap-3">
+                <input
+                  type="checkbox"
+                  checked={researchUseConfirmed}
+                  onChange={(e) => setResearchUseConfirmed(e.target.checked)}
+                  className="mt-0.5 size-4 shrink-0 rounded border-border"
+                />
+                <span className="text-xs leading-relaxed text-muted-foreground">
+                  I confirm that I am{" "}
+                  <span className="text-foreground">18 years or older</span>,
+                  that I am purchasing these products solely for{" "}
+                  <span className="text-foreground">
+                    in-vitro laboratory research
+                  </span>
+                  , and that I will not administer them to, or permit their use
+                  in, humans or animals. I understand these products are not
+                  medicines, are not for human or veterinary consumption, and
+                  are supplied subject to the{" "}
+                  <Link
+                    href="/terms"
+                    target="_blank"
+                    className="text-primary underline underline-offset-2"
+                  >
+                    terms of supply
+                  </Link>
+                  .
+                </span>
+              </label>
+            </div>
+
             {error && <p className="text-sm text-red-400">{error}</p>}
 
             <button
               type="submit"
-              disabled={submitting}
-              className="flex w-full items-center justify-center rounded-full bg-metal-gradient px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+              disabled={submitting || !researchUseConfirmed}
+              className="flex w-full items-center justify-center rounded-full bg-metal-gradient px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {submitting ? "Placing Order..." : "Place Order"}
             </button>
@@ -196,6 +242,10 @@ export default function CheckoutPage() {
             <div className="mt-4 flex justify-between border-t border-border pt-4 font-semibold">
               <span>Total</span>
               <span>{formatPrice(subtotalCents)}</span>
+            </div>
+
+            <div className="mt-5">
+              <ResearchNotice variant="inline" />
             </div>
           </div>
         </div>

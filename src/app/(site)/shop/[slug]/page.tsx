@@ -5,6 +5,7 @@ import { getProductBySlug } from "@/lib/products";
 import { getApprovedReviews } from "@/lib/reviews";
 import ProductGallery from "@/components/product-gallery";
 import ProductPurchasePanel from "@/components/product-purchase-panel";
+import ResearchNotice from "@/components/research-notice";
 
 export default async function ProductPage({
   params,
@@ -28,7 +29,7 @@ export default async function ProductPage({
           href="/shop"
           className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground hover:text-primary"
         >
-          ← Back to Collection
+          ← Back to Catalogue
         </Link>
 
         <div className="mt-6 grid gap-10 lg:grid-cols-2">
@@ -71,14 +72,34 @@ export default async function ProductPage({
               </div>
             )}
 
+            <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-500">
+              Research use only — not for human or veterinary consumption
+            </p>
+
             {product.description && (
-              <p className="mt-5 leading-relaxed text-muted-foreground">
-                {product.description}
-              </p>
+              <>
+                <h2 className="mt-6 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  Compound information
+                </h2>
+                <p className="mt-2 leading-relaxed text-muted-foreground">
+                  {product.description}
+                </p>
+                <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                  The above summarises published scientific literature on this
+                  compound&apos;s class and mechanism of action, for research
+                  reference only. It is not a claim that this compound treats,
+                  prevents, or alleviates any condition, and not a
+                  recommendation for use in humans or animals.
+                </p>
+              </>
             )}
 
             <div className="mt-7">
               <ProductPurchasePanel product={product} />
+            </div>
+
+            <div className="mt-7">
+              <ResearchNotice />
             </div>
           </div>
         </div>

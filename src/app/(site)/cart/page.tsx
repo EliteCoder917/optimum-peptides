@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
+import ResearchNotice from "@/components/research-notice";
 
 const FORM_LABELS: Record<string, string> = {
   vial: "Vial",
@@ -28,12 +29,13 @@ export default function CartPage() {
               href="/shop"
               className="mt-5 inline-flex rounded-full bg-metal-gradient px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
-              Browse the Collection
+              Browse the Catalogue
             </Link>
           </div>
         ) : (
           <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_320px]">
             <div className="space-y-4">
+              <ResearchNotice />
               {items.map((item) => (
                 <div
                   key={item.variantId}

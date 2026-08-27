@@ -64,6 +64,9 @@ export default function ProductFormModal({
     product?.categories ?? [],
   );
   const [isActive, setIsActive] = useState(product?.isActive ?? true);
+  const [regulatoryClass, setRegulatoryClass] = useState<"ruo" | "pom">(
+    product?.regulatoryClass ?? "ruo",
+  );
   const [images, setImages] = useState<ImageSlot[]>(
     (product?.imageUrls ?? []).map((url) => ({
       status: "existing" as const,
@@ -226,6 +229,7 @@ export default function ProductFormModal({
       image_urls: finalImageUrls,
       categories,
       is_active: isActive,
+      regulatory_class: regulatoryClass,
     };
 
     let productId = product?.id;
@@ -460,6 +464,44 @@ export default function ProductFormModal({
               onChange={handleFileSelected}
               className="hidden"
             />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              Regulatory classification
+            </label>
+            <select
+              value={regulatoryClass}
+              onChange={(event) =>
+                setRegulatoryClass(event.target.value as "ruo" | "pom")
+              }
+              className="mt-1 h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none focus:border-blue-400"
+            >
+              <option value="ruo">
+                Research chemical — sold for laboratory research use
+              </option>
+              <option value="pom">
+                Prescription-only medicine — cannot be sold publicly
+              </option>
+            </select>
+
+            {regulatoryClass === "pom" ? (
+              <p className="mt-2 rounded-lg border border-red-200 bg-red-50 p-3 text-xs leading-relaxed text-red-700">
+                This product is hidden from the storefront and blocked at
+                checkout regardless of the Active setting. Supplying a
+                prescription-only medicine without a prescription, and
+                advertising one to the public, are separate offences under the
+                Human Medicines Regulations 2012 — a &quot;research use only&quot;
+                label is not a defence to either.
+              </p>
+            ) : (
+              <p className="mt-2 text-xs leading-relaxed text-gray-500">
+                Keep the description mechanistic. No therapeutic claims, no
+                dosing or administration guidance, and no framing that suggests
+                human or veterinary use — that is what keeps a compound outside
+                the medicines regime.
+              </p>
+            )}
           </div>
 
           <label className="flex items-center gap-2 text-sm text-gray-700">

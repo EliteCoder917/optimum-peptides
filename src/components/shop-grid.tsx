@@ -87,10 +87,14 @@ export default function ShopGrid({ products }: { products: Product[] }) {
               )}
 
               {product.description && (
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-4 line-clamp-4 text-sm leading-relaxed text-muted-foreground">
                   {product.description}
                 </p>
               )}
+
+              <p className="mt-4 text-[10px] uppercase tracking-[0.14em] text-amber-500/80">
+                Research use only — not for human consumption
+              </p>
             </Link>
           );
         })}

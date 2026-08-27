@@ -11,6 +11,11 @@ export type ProductVariant = {
   form: VariantForm | null;
 };
 
+// 'pom' = a licensed prescription-only medicine. These can never be listed
+// or sold publicly (Human Medicines Regulations 2012, regs 7 and 214) — a
+// research-use label is not a defence. Public queries filter them out.
+export type RegulatoryClass = "ruo" | "pom";
+
 export type Product = {
   id: string;
   name: string;
@@ -19,6 +24,7 @@ export type Product = {
   imageUrls: string[];
   categories: string[];
   isActive: boolean;
+  regulatoryClass: RegulatoryClass;
   variants: ProductVariant[];
 };
 

@@ -16,8 +16,15 @@ export default function Contact() {
             </h1>
 
             <p className="mt-5 text-muted-foreground">
-              Have a question about an order, a product, or anything else? Send
-              us a message and we will get back to you.
+              Have a question about an order or a catalogue listing? Send us a
+              message and we will get back to you.
+            </p>
+
+            <p className="mx-auto mt-5 max-w-xl rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+              We cannot answer questions about dosing, administration, or use
+              in humans or animals, and we cannot give medical advice. All
+              products are supplied for laboratory research only. For health
+              matters, speak to a qualified healthcare professional.
             </p>
           </div>
         </section>

@@ -36,7 +36,10 @@ Run `npm run format` before committing to keep formatting consistent between edi
 Schema lives in `supabase/migrations/`. No customer accounts yet — checkout is
 guest-only, orders are tracked by email rather than a user id.
 
-- `products` / `product_variants` — catalog. Variants hold price and stock
+- `products` / `product_variants` — catalog. `products.regulatory_class`
+  gates whether a product may be sold publicly at all — see
+  [Research-use-only compliance](#research-use-only-compliance-uk).
+  Variants hold price and stock
   (peptides are sold in multiple dosages, e.g. 5mg/10mg per product).
   `products.image_urls` holds up to 5 image URLs (enforced by a check
   constraint), first = cover image shown on cards. `products.categories` is
@@ -184,6 +187,59 @@ live project — created directly via the Storage API since bucket creation
 doesn't need SQL access, unlike the `products.image_urls` column change in
 `20260818000001_product_images.sql`, which still needs that migration run
 before saving a product with images will work.
+
+### Research-use-only compliance (UK)
+
+The store sells research chemicals, not medicines. That status is decided
+entirely by **how products are presented**, not by what they are — so the
+compliance rules below are load-bearing, not decoration. Breaking any of
+them can turn a listing into an unlicensed medicine by presentation.
+
+Rules to hold to when touching storefront copy or product data:
+
+- **No therapeutic claims.** Never state or imply that a compound treats,
+  prevents, or alleviates anything in humans or animals. This is why
+  `PRODUCT_CATEGORIES` are research domains ("Metabolic Research") rather
+  than the benefit claims they used to be ("Weight Loss", "Libido").
+- **No dosing or administration guidance**, anywhere, including in reply to
+  a customer email.
+- **No human-use framing.** Product descriptions summarise molecular class
+  and published mechanism only. Where a compound is licensed as a medicine
+  somewhere, that is stated as factual background, never as an indication
+  on offer.
+- **The research-use statement must be visible** on every page that shows a
+  product, a price, or a step toward purchase — `ResearchNotice`
+  (`src/components/research-notice.tsx`), plus the site-wide
+  `ResearchBanner` and the footer disclaimer.
+
+`AgeGate` blocks the catalogue until the visitor confirms 18+ and research
+intent. Checkout requires an explicit research-use declaration, re-checked
+server-side in `/api/checkout` (an order cannot be created without it) and
+recorded on the order via `orders.research_use_confirmed`.
+
+#### Prescription-only medicines are a hard exclusion
+
+`products.regulatory_class` is `'ruo'` or `'pom'`. **A "research use only"
+label is not a defence for a licensed prescription-only medicine.** Two
+separate offences apply under the Human Medicines Regulations 2012:
+supplying a POM without a prescription (reg 214), and advertising one to
+the public at all (reg 7) — the latter bites merely by listing it.
+
+So `'pom'` rows are excluded in three places, and all three matter:
+
+1. `getProducts()` / `getProductBySlug()` filter `regulatory_class = 'ruo'`.
+   **Never drop this filter from a public-facing query.**
+2. `/api/checkout` rejects any POM variant, in case a stale cart or crafted
+   request carries its id.
+3. The admin products table replaces the active/inactive toggle with a
+   "not sellable" badge so a POM cannot be published by accident.
+
+If the `regulatory_class` column is missing, those queries error and the
+catalogue renders empty. That is the intended failure direction — an empty
+shop is recoverable, a shop publicly listing prescription medicines is not.
+
+Currently classified `'pom'`: semaglutide, tirzepatide, sermorelin,
+tesamorelin, bremelanotide (PT-141), and cerebrolysin.
 
 ### Product pages, cart, and checkout
 

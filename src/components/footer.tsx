@@ -12,8 +12,8 @@ export default function Footer() {
           <Logo textClassName="text-xl" />
 
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            Your straightforward source for high-quality peptides, with easy
-            ordering and fast, secure shipping.
+            Research chemicals supplied to laboratories and qualified
+            researchers, with documented listings and tracked dispatch.
           </p>
         </div>
 
@@ -50,6 +50,15 @@ export default function Footer() {
                 Contact
               </Link>
             </li>
+
+            <li>
+              <Link
+                href="/terms"
+                className="transition-colors hover:text-primary"
+              >
+                Terms of Supply
+              </Link>
+            </li>
           </ul>
         </nav>
 
@@ -73,6 +82,30 @@ export default function Footer() {
           >
             Contact Us
           </Link>
+        </div>
+      </div>
+
+      {/* Research use disclaimer */}
+      <div className="border-t border-border px-5 py-7">
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-500">
+            For laboratory research use only
+          </p>
+          <p className="mx-auto mt-3 max-w-3xl text-xs leading-relaxed text-muted-foreground">
+            All products sold on this site are supplied strictly as research
+            chemicals for in-vitro laboratory use by qualified professionals.
+            They are not medicines, foods, cosmetics, or supplements, and are
+            not for human or veterinary consumption, nor for diagnostic or
+            therapeutic use. No statement on this site is a claim that any
+            compound treats, prevents, or alleviates any condition. We do not
+            supply licensed prescription-only medicines, and we provide no
+            dosing or administration guidance. By ordering you confirm you are
+            18 or over and accept our{" "}
+            <Link href="/terms" className="underline underline-offset-2 hover:text-primary">
+              terms of supply
+            </Link>
+            .
+          </p>
         </div>
       </div>
 
