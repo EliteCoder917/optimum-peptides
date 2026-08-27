@@ -91,16 +91,19 @@ export default function AgeGate() {
         </p>
 
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+          {/* Both are flex-centred rather than relying on text-align: the
+              row stretches items to equal height, and a block-level <a>
+              would keep its single line pinned to the top. */}
           <button
             type="button"
             onClick={accept}
-            className="bg-metal-gradient flex-1 rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-[0.14em] text-primary-foreground transition-opacity hover:opacity-90"
+            className="bg-metal-gradient flex flex-1 items-center justify-center rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-[0.14em] text-primary-foreground transition-opacity hover:opacity-90"
           >
-            I confirm — enter site
+            Confirm &amp; enter
           </button>
           <a
             href="https://www.gov.uk"
-            className="flex-1 rounded-full border border-border px-6 py-3 text-center text-sm font-medium uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:bg-white/5"
+            className="flex flex-1 items-center justify-center rounded-full border border-border px-6 py-3 text-sm font-medium uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:bg-white/5"
           >
             Leave
           </a>
