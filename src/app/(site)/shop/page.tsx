@@ -1,6 +1,5 @@
 import { getProducts } from "@/lib/products";
 import ShopGrid from "@/components/shop-grid";
-import ResearchNotice from "@/components/research-notice";
 
 export default async function Shop() {
   const products = await getProducts();
@@ -36,11 +35,7 @@ export default async function Shop() {
 
         {/* CATALOGUE */}
         <section className="mx-auto max-w-7xl px-5 py-12">
-          <ResearchNotice />
-
-          <div className="mt-10">
-            <ShopGrid products={products} />
-          </div>
+          <ShopGrid products={products} />
         </section>
       </main>
     </div>

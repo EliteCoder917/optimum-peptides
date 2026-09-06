@@ -201,19 +201,31 @@ Rules to hold to when touching storefront copy or product data:
   prevents, or alleviates anything in humans or animals. This is why
   `PRODUCT_CATEGORIES` are research domains ("Metabolic Research") rather
   than the benefit claims they used to be ("Weight Loss", "Libido").
+  The line to hold: a category names a **body system or molecular class**
+  (where a researcher would look), never an **outcome for the reader**
+  (what it does to them). "Skin Research" is a shelf label; "Weight Loss"
+  is a therapeutic claim sitting next to a price, and a disclaimer
+  elsewhere on the page does not cure it — MHRA classifies on overall
+  presentation, and implied claims count the same as explicit ones. Plain
+  English is fine and encouraged ("Skin" over "Dermatological"); outcomes
+  are not. Renaming a category means migrating `products.categories` in
+  the same change, or its pill silently disappears from the shop.
 - **No dosing or administration guidance**, anywhere, including in reply to
   a customer email.
 - **No human-use framing.** Product descriptions summarise molecular class
   and published mechanism only. Where a compound is licensed as a medicine
   somewhere, that is stated as factual background, never as an indication
   on offer.
-- **The research-use statement must be visible** on every page that shows a
-  product, a price, or a step toward purchase — `ResearchNotice`
-  (`src/components/research-notice.tsx`), plus the site-wide
-  `ResearchBanner` and the footer disclaimer.
+- **The research-use statement must be visible at the point of sale** —
+  `ResearchNotice` (`src/components/research-notice.tsx`) on the product
+  page and inline at checkout, plus the footer disclaimer sitewide. It was
+  previously on every page and on every catalogue card as well; that was
+  cut back because four simultaneous copies of the same warning read as
+  boilerplate and stopped being noticed. Keep the product-page and checkout
+  ones — they are the two that sit next to a price and a buy button.
 
 `AgeGate` blocks the catalogue until the visitor confirms 18+ and research
-intent. Checkout requires an explicit research-use declaration, re-checked
+intent, once per browser session. Checkout requires an explicit research-use declaration, re-checked
 server-side in `/api/checkout` (an order cannot be created without it) and
 recorded on the order via `orders.research_use_confirmed`.
 

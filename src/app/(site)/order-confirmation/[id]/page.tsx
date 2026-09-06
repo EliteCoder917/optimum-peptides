@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import ResearchNotice from "@/components/research-notice";
 
 type OrderItemRow = {
   id: string;
@@ -90,10 +89,6 @@ export default async function OrderConfirmationPage({
             </p>
           </div>
         )}
-
-        <div className="mt-5">
-          <ResearchNotice />
-        </div>
 
         <Link
           href="/shop"

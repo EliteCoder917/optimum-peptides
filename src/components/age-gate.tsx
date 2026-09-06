@@ -12,6 +12,11 @@ const STORAGE_KEY = "op-research-ack";
  *
  * This is an access control, not proof of identity — it records that the
  * terms were put to the visitor before they saw any product.
+ *
+ * Scoped to sessionStorage rather than localStorage: with the site-wide
+ * banner and the per-card notices gone, this gate carries most of the
+ * weight, so it needs to be put to a returning visitor again rather than
+ * being answered once and never shown after that.
  */
 export default function AgeGate() {
   const [acknowledged, setAcknowledged] = useState<boolean | null>(null);
@@ -19,7 +24,7 @@ export default function AgeGate() {
   useEffect(() => {
     try {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setAcknowledged(localStorage.getItem(STORAGE_KEY) === "true");
+      setAcknowledged(sessionStorage.getItem(STORAGE_KEY) === "true");
     } catch {
       // Storage blocked — show the gate rather than silently skipping it.
       setAcknowledged(false);
@@ -28,7 +33,7 @@ export default function AgeGate() {
 
   function accept() {
     try {
-      localStorage.setItem(STORAGE_KEY, "true");
+      sessionStorage.setItem(STORAGE_KEY, "true");
     } catch {
       // Storage unavailable — still let them through for this session.
     }

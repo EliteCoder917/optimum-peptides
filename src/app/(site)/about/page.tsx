@@ -1,4 +1,3 @@
-import ResearchNotice from "@/components/research-notice";
 
 const values = [
   {
@@ -58,10 +57,6 @@ export default function About() {
                 </p>
               </div>
             ))}
-          </div>
-
-          <div className="mx-auto mt-14 max-w-3xl">
-            <ResearchNotice />
           </div>
         </section>
 

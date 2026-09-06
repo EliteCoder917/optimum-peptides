@@ -1,10 +1,25 @@
 import Link from "next/link";
-import { getProducts } from "@/lib/products";
+import { getProducts, getProductBySlug } from "@/lib/products";
 import { getDisplayPriceCents } from "@/lib/product-helpers";
-import ResearchNotice from "@/components/research-notice";
+
+// The compound given the featured slot under the hero.
+//
+// Fetched through getProductBySlug rather than picked out of the catalogue
+// list, so the slot inherits that query's `is_active` and
+// `regulatory_class = 'ruo'` filters: if this row is ever deactivated or
+// reclassified 'pom', the band removes itself instead of putting the one
+// product we may not advertise at the top of the front page. A missing or
+// misspelled slug renders nothing, so the page is never broken by it.
+const FEATURED_SLUG = "retatrutide";
 
 export default async function Home() {
-  const products = (await getProducts()).slice(0, 6);
+  const [allProducts, featured] = await Promise.all([
+    getProducts(),
+    getProductBySlug(FEATURED_SLUG),
+  ]);
+
+  const products = allProducts.slice(0, 6);
+  const featuredPriceCents = featured ? getDisplayPriceCents(featured) : null;
 
   return (
     <div id="top" className="min-h-screen bg-background">
@@ -79,6 +94,69 @@ export default async function Home() {
             </div>
           </div>
         </section>
+
+        {/* FEATURED COMPOUND */}
+        {featured && (
+          <section className="border-t border-border bg-card/40">
+            <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 lg:grid-cols-[0.85fr_1.15fr] lg:py-20">
+              {featured.imageUrls[0] && (
+                <div className="panel glow-ring order-last overflow-hidden rounded-[1.75rem] p-4 lg:order-first">
+                  <div className="aspect-[4/3] overflow-hidden rounded-[1.25rem]">
+                    <img
+                      src={featured.imageUrls[0]}
+                      alt={featured.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <span className="inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-[11px] uppercase tracking-[0.24em] text-primary">
+                  Featured compound
+                </span>
+
+                <h2 className="mt-5 text-4xl font-bold sm:text-5xl">
+                  {featured.name}
+                </h2>
+
+                {/* Admin-authored copy rather than bespoke marketing text:
+                    descriptions already sit under the no-claims rule, so
+                    the featured slot can't become the one place on the site
+                    where a therapeutic claim gets written by hand. */}
+                {featured.description && (
+                  <p className="mt-5 line-clamp-3 max-w-xl text-base leading-relaxed text-muted-foreground">
+                    {featured.description}
+                  </p>
+                )}
+
+                {featuredPriceCents !== null && (
+                  <p className="mt-5 text-xs uppercase tracking-[0.18em] text-primary">
+                    From ${(featuredPriceCents / 100).toFixed(2)}
+                  </p>
+                )}
+
+                {/* This band carries a price, so it is a point of sale and
+                    takes the statement on its own account — the hero above
+                    it is not doing that job for it. */}
+                <p className="mt-4 max-w-xl text-xs uppercase leading-relaxed tracking-[0.1em] text-amber-500/90">
+                  Supplied for in-vitro laboratory research only — not for
+                  human or veterinary consumption.
+                </p>
+
+                <div className="mt-8">
+                  <Link
+                    href={`/shop/${featured.slug}`}
+                    className="bg-metal-gradient inline-flex items-center rounded-full px-7 py-3 text-sm font-medium uppercase tracking-[0.16em] text-primary-foreground transition-opacity hover:opacity-85"
+                  >
+                    View Listing
+                    <span className="ml-2">→</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* TRUST STRIP */}
         <section className="border-y border-border bg-card/40">
@@ -166,10 +244,6 @@ export default async function Home() {
               No products yet — check back soon.
             </p>
           )}
-
-          <div className="mt-12">
-            <ResearchNotice />
-          </div>
         </section>
 
         {/* CLOSING CTA */}

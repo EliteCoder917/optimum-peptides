@@ -4,16 +4,24 @@ import type { Product, ProductVariant } from "@/types";
 // "Libido", "Joint Pain"…) each asserted a human therapeutic effect, which
 // is exactly what pushes a research chemical into being an unlicensed
 // medicine by presentation. These describe the field of study instead.
+//
+// Each name must stay a *body system or molecular class* — where a
+// researcher would look — never an outcome for the reader. "Skin" is a
+// shelf label; "Anti-Ageing" is a claim, and so is "Weight Loss". The
+// plain-English wording here is only about readability: the Latinate
+// originals ("Dermatological", "Musculoskeletal") were no safer, just
+// harder to scan. Renaming one means migrating `products.categories`
+// alongside it — see 20260905000001_plain_category_names.sql.
 export const PRODUCT_CATEGORIES = [
   "Metabolic Research",
   "Tissue Repair Research",
   "Growth Factor Research",
-  "Endocrine Research",
-  "Gastrointestinal Research",
-  "Dermatological Research",
+  "Hormone Research",
+  "Digestive Research",
+  "Skin Research",
   "Cellular & Longevity Research",
-  "Neurological Research",
-  "Musculoskeletal Research",
+  "Brain & Nervous System Research",
+  "Muscle & Bone Research",
 ] as const;
 
 type ProductVariantRow = {
