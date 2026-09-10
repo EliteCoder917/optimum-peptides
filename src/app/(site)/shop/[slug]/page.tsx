@@ -5,7 +5,6 @@ import { getProductBySlug } from "@/lib/products";
 import { getApprovedReviews } from "@/lib/reviews";
 import ProductGallery from "@/components/product-gallery";
 import ProductPurchasePanel from "@/components/product-purchase-panel";
-import ResearchNotice from "@/components/research-notice";
 
 export default async function ProductPage({
   params,
@@ -84,11 +83,14 @@ export default async function ProductPage({
                 <p className="mt-2 leading-relaxed text-muted-foreground">
                   {product.description}
                 </p>
+                {/* Tied to the description rather than to the page: what keeps
+                    a catalogue listing outside the definition of an
+                    advertisement is that no product claim is made, so the line
+                    saying so belongs against the copy it qualifies. */}
                 <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                  The above summarises published scientific literature on this
-                  compound&apos;s class and mechanism of action, for research
-                  reference only. It is not a claim that this compound treats,
-                  prevents, or alleviates any condition, and not a
+                  Summarises published literature on this compound&apos;s class
+                  and mechanism, for research reference only — not a claim that
+                  it treats, prevents, or alleviates any condition, and not a
                   recommendation for use in humans or animals.
                 </p>
               </>
@@ -96,10 +98,6 @@ export default async function ProductPage({
 
             <div className="mt-7">
               <ProductPurchasePanel product={product} />
-            </div>
-
-            <div className="mt-7">
-              <ResearchNotice />
             </div>
           </div>
         </div>
