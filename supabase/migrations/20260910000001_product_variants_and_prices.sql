@@ -1,0 +1,115 @@
+-- The live product variants and their real selling prices: 3 sizes per
+-- product, plus pens on the GLP-1s.
+--
+-- NOT sample data. Deliberately not named "seed", because `supabase/seed.sql`
+-- in this project is the throwaway local-dev fixture ("Sample Peptide") that
+-- runs on `db reset` — this file is the actual catalogue the shop sells from,
+-- and these are the prices customers are charged.
+--
+-- Sizes mirror what UK suppliers actually list per compound; prices sit near
+-- the median of the surveyed spread rather than at either extreme. Amounts are
+-- GBP in minor units (price_cents), matching the rest of the schema.
+--
+-- Pens are deliberately limited to the four GLP-1 products. A pre-filled pen
+-- is a human-administration format, so it stays off every compound where the
+-- market does not already require it — and off the catalogue entirely for
+-- anything presented as laboratory material only.
+--
+-- Idempotent on the unique sku, so replaying this is safe.
+insert into product_variants
+  (product_id, name, sku, price_cents, stock_quantity, form, is_active)
+values
+  ((select id from products where slug = 'semaglutide'), 'Vial - 2mg', 'OP-SEMA-V-2MG', 3499, 25, 'vial', true),
+  ((select id from products where slug = 'semaglutide'), 'Vial - 5mg', 'OP-SEMA-V-5MG', 6499, 25, 'vial', true),
+  ((select id from products where slug = 'semaglutide'), 'Vial - 10mg', 'OP-SEMA-V-10MG', 10499, 25, 'vial', true),
+  ((select id from products where slug = 'semaglutide'), 'Pen - 10mg', 'OP-SEMA-P-10MG', 8499, 25, 'pen', true),
+  ((select id from products where slug = 'semaglutide'), 'Pen - 20mg', 'OP-SEMA-P-20MG', 12999, 25, 'pen', true),
+  ((select id from products where slug = 'semaglutide'), 'Pen - 30mg', 'OP-SEMA-P-30MG', 16499, 25, 'pen', true),
+  ((select id from products where slug = 'tirzepatide'), 'Vial - 5mg', 'OP-TIRZ-V-5MG', 4499, 25, 'vial', true),
+  ((select id from products where slug = 'tirzepatide'), 'Vial - 10mg', 'OP-TIRZ-V-10MG', 7499, 25, 'vial', true),
+  ((select id from products where slug = 'tirzepatide'), 'Vial - 20mg', 'OP-TIRZ-V-20MG', 11999, 25, 'vial', true),
+  ((select id from products where slug = 'tirzepatide'), 'Pen - 10mg', 'OP-TIRZ-P-10MG', 6499, 25, 'pen', true),
+  ((select id from products where slug = 'tirzepatide'), 'Pen - 20mg', 'OP-TIRZ-P-20MG', 9499, 25, 'pen', true),
+  ((select id from products where slug = 'tirzepatide'), 'Pen - 30mg', 'OP-TIRZ-P-30MG', 12499, 25, 'pen', true),
+  ((select id from products where slug = 'retatrutide'), 'Vial - 5mg', 'OP-RETA-V-5MG', 6999, 25, 'vial', true),
+  ((select id from products where slug = 'retatrutide'), 'Vial - 10mg', 'OP-RETA-V-10MG', 11999, 25, 'vial', true),
+  ((select id from products where slug = 'retatrutide'), 'Vial - 20mg', 'OP-RETA-V-20MG', 19499, 25, 'vial', true),
+  ((select id from products where slug = 'retatrutide'), 'Pen - 20mg', 'OP-RETA-P-20MG', 11999, 25, 'pen', true),
+  ((select id from products where slug = 'retatrutide'), 'Pen - 30mg', 'OP-RETA-P-30MG', 15999, 25, 'pen', true),
+  ((select id from products where slug = 'retatrutide'), 'Pen - 40mg', 'OP-RETA-P-40MG', 19999, 25, 'pen', true),
+  ((select id from products where slug = 'cagrilintide'), 'Vial - 5mg', 'OP-CAGRI-V-5MG', 5999, 25, 'vial', true),
+  ((select id from products where slug = 'cagrilintide'), 'Vial - 10mg', 'OP-CAGRI-V-10MG', 9999, 25, 'vial', true),
+  ((select id from products where slug = 'cagrilintide'), 'Vial - 20mg', 'OP-CAGRI-V-20MG', 16499, 25, 'vial', true),
+  ((select id from products where slug = 'cagrilintide'), 'Pen - 10mg', 'OP-CAGRI-P-10MG', 9999, 25, 'pen', true),
+  ((select id from products where slug = 'cagrilintide'), 'Pen - 20mg', 'OP-CAGRI-P-20MG', 14499, 25, 'pen', true),
+  ((select id from products where slug = 'cagrilintide'), 'Pen - 30mg', 'OP-CAGRI-P-30MG', 18499, 25, 'pen', true),
+  ((select id from products where slug = 'aod-9604'), 'Vial - 2mg', 'OP-AOD-V-2MG', 1999, 25, 'vial', true),
+  ((select id from products where slug = 'aod-9604'), 'Vial - 5mg', 'OP-AOD-V-5MG', 3299, 25, 'vial', true),
+  ((select id from products where slug = 'aod-9604'), 'Vial - 10mg', 'OP-AOD-V-10MG', 5499, 25, 'vial', true),
+  ((select id from products where slug = 'bpc-157'), 'Vial - 5mg', 'OP-BPC-V-5MG', 2999, 25, 'vial', true),
+  ((select id from products where slug = 'bpc-157'), 'Vial - 10mg', 'OP-BPC-V-10MG', 4999, 25, 'vial', true),
+  ((select id from products where slug = 'bpc-157'), 'Vial - 20mg', 'OP-BPC-V-20MG', 8499, 25, 'vial', true),
+  ((select id from products where slug = 'tb-500-thymosin-beta-4'), 'Vial - 2mg', 'OP-TB500-V-2MG', 2499, 25, 'vial', true),
+  ((select id from products where slug = 'tb-500-thymosin-beta-4'), 'Vial - 5mg', 'OP-TB500-V-5MG', 4999, 25, 'vial', true),
+  ((select id from products where slug = 'tb-500-thymosin-beta-4'), 'Vial - 10mg', 'OP-TB500-V-10MG', 8499, 25, 'vial', true),
+  ((select id from products where slug = 'ghk-cu'), 'Vial - 50mg', 'OP-GHKCU-V-50MG', 3999, 25, 'vial', true),
+  ((select id from products where slug = 'ghk-cu'), 'Vial - 100mg', 'OP-GHKCU-V-100MG', 6999, 25, 'vial', true),
+  ((select id from products where slug = 'ghk-cu'), 'Vial - 200mg', 'OP-GHKCU-V-200MG', 11499, 25, 'vial', true),
+  ((select id from products where slug = 'cjc-1295'), 'Vial - 2mg', 'OP-CJC-V-2MG', 2299, 25, 'vial', true),
+  ((select id from products where slug = 'cjc-1295'), 'Vial - 5mg', 'OP-CJC-V-5MG', 3799, 25, 'vial', true),
+  ((select id from products where slug = 'cjc-1295'), 'Vial - 10mg', 'OP-CJC-V-10MG', 6499, 25, 'vial', true),
+  ((select id from products where slug = 'ipamorelin'), 'Vial - 2mg', 'OP-IPAM-V-2MG', 1999, 25, 'vial', true),
+  ((select id from products where slug = 'ipamorelin'), 'Vial - 5mg', 'OP-IPAM-V-5MG', 3199, 25, 'vial', true),
+  ((select id from products where slug = 'ipamorelin'), 'Vial - 10mg', 'OP-IPAM-V-10MG', 5499, 25, 'vial', true),
+  ((select id from products where slug = 'sermorelin'), 'Vial - 2mg', 'OP-SERM-V-2MG', 2199, 25, 'vial', true),
+  ((select id from products where slug = 'sermorelin'), 'Vial - 5mg', 'OP-SERM-V-5MG', 3599, 25, 'vial', true),
+  ((select id from products where slug = 'sermorelin'), 'Vial - 10mg', 'OP-SERM-V-10MG', 5999, 25, 'vial', true),
+  ((select id from products where slug = 'tesamorelin'), 'Vial - 2mg', 'OP-TESA-V-2MG', 2999, 25, 'vial', true),
+  ((select id from products where slug = 'tesamorelin'), 'Vial - 5mg', 'OP-TESA-V-5MG', 5499, 25, 'vial', true),
+  ((select id from products where slug = 'tesamorelin'), 'Vial - 10mg', 'OP-TESA-V-10MG', 8999, 25, 'vial', true),
+  ((select id from products where slug = 'ghrp-2'), 'Vial - 5mg', 'OP-GHRP2-V-5MG', 1799, 25, 'vial', true),
+  ((select id from products where slug = 'ghrp-2'), 'Vial - 10mg', 'OP-GHRP2-V-10MG', 2999, 25, 'vial', true),
+  ((select id from products where slug = 'ghrp-2'), 'Vial - 20mg', 'OP-GHRP2-V-20MG', 4999, 25, 'vial', true),
+  ((select id from products where slug = 'ghrp-6'), 'Vial - 5mg', 'OP-GHRP6-V-5MG', 1799, 25, 'vial', true),
+  ((select id from products where slug = 'ghrp-6'), 'Vial - 10mg', 'OP-GHRP6-V-10MG', 2999, 25, 'vial', true),
+  ((select id from products where slug = 'ghrp-6'), 'Vial - 20mg', 'OP-GHRP6-V-20MG', 4999, 25, 'vial', true),
+  ((select id from products where slug = 'pt-141-bremelanotide'), 'Vial - 5mg', 'OP-PT141-V-5MG', 2499, 25, 'vial', true),
+  ((select id from products where slug = 'pt-141-bremelanotide'), 'Vial - 10mg', 'OP-PT141-V-10MG', 3999, 25, 'vial', true),
+  ((select id from products where slug = 'pt-141-bremelanotide'), 'Vial - 20mg', 'OP-PT141-V-20MG', 6799, 25, 'vial', true),
+  ((select id from products where slug = 'kisspeptin'), 'Vial - 5mg', 'OP-KISS-V-5MG', 2299, 25, 'vial', true),
+  ((select id from products where slug = 'kisspeptin'), 'Vial - 10mg', 'OP-KISS-V-10MG', 3799, 25, 'vial', true),
+  ((select id from products where slug = 'kisspeptin'), 'Vial - 20mg', 'OP-KISS-V-20MG', 6499, 25, 'vial', true),
+  ((select id from products where slug = 'kpv'), 'Vial - 5mg', 'OP-KPV-V-5MG', 2199, 25, 'vial', true),
+  ((select id from products where slug = 'kpv'), 'Vial - 10mg', 'OP-KPV-V-10MG', 3499, 25, 'vial', true),
+  ((select id from products where slug = 'kpv'), 'Vial - 20mg', 'OP-KPV-V-20MG', 5999, 25, 'vial', true),
+  ((select id from products where slug = 'larazotide'), 'Vial - 5mg', 'OP-LARA-V-5MG', 3999, 25, 'vial', true),
+  ((select id from products where slug = 'larazotide'), 'Vial - 10mg', 'OP-LARA-V-10MG', 6799, 25, 'vial', true),
+  ((select id from products where slug = 'larazotide'), 'Vial - 20mg', 'OP-LARA-V-20MG', 11499, 25, 'vial', true),
+  ((select id from products where slug = 'epitalon'), 'Vial - 10mg', 'OP-EPIT-V-10MG', 2499, 25, 'vial', true),
+  ((select id from products where slug = 'epitalon'), 'Vial - 20mg', 'OP-EPIT-V-20MG', 4299, 25, 'vial', true),
+  ((select id from products where slug = 'epitalon'), 'Vial - 50mg', 'OP-EPIT-V-50MG', 8999, 25, 'vial', true),
+  ((select id from products where slug = 'mots-c'), 'Vial - 5mg', 'OP-MOTS-V-5MG', 4499, 25, 'vial', true),
+  ((select id from products where slug = 'mots-c'), 'Vial - 10mg', 'OP-MOTS-V-10MG', 7499, 25, 'vial', true),
+  ((select id from products where slug = 'mots-c'), 'Vial - 20mg', 'OP-MOTS-V-20MG', 12499, 25, 'vial', true),
+  ((select id from products where slug = 'humanin'), 'Vial - 5mg', 'OP-HUMA-V-5MG', 4999, 25, 'vial', true),
+  ((select id from products where slug = 'humanin'), 'Vial - 10mg', 'OP-HUMA-V-10MG', 8499, 25, 'vial', true),
+  ((select id from products where slug = 'humanin'), 'Vial - 20mg', 'OP-HUMA-V-20MG', 13999, 25, 'vial', true),
+  ((select id from products where slug = 'semax'), 'Vial - 5mg', 'OP-SEMX-V-5MG', 1699, 25, 'vial', true),
+  ((select id from products where slug = 'semax'), 'Vial - 10mg', 'OP-SEMX-V-10MG', 2699, 25, 'vial', true),
+  ((select id from products where slug = 'semax'), 'Vial - 30mg', 'OP-SEMX-V-30MG', 5999, 25, 'vial', true),
+  ((select id from products where slug = 'selank'), 'Vial - 5mg', 'OP-SELA-V-5MG', 1699, 25, 'vial', true),
+  ((select id from products where slug = 'selank'), 'Vial - 10mg', 'OP-SELA-V-10MG', 2699, 25, 'vial', true),
+  ((select id from products where slug = 'selank'), 'Vial - 30mg', 'OP-SELA-V-30MG', 5999, 25, 'vial', true),
+  ((select id from products where slug = 'dihexa'), 'Vial - 5mg', 'OP-DIHE-V-5MG', 6999, 25, 'vial', true),
+  ((select id from products where slug = 'dihexa'), 'Vial - 10mg', 'OP-DIHE-V-10MG', 11999, 25, 'vial', true),
+  ((select id from products where slug = 'dihexa'), 'Vial - 20mg', 'OP-DIHE-V-20MG', 19999, 25, 'vial', true),
+  ((select id from products where slug = 'cerebrolysin'), 'Vial - 5ml', 'OP-CERE-V-5ML', 3999, 25, 'vial', true),
+  ((select id from products where slug = 'cerebrolysin'), 'Vial - 10ml', 'OP-CERE-V-10ML', 6999, 25, 'vial', true),
+  ((select id from products where slug = 'cerebrolysin'), 'Vial - 30ml', 'OP-CERE-V-30ML', 16499, 25, 'vial', true),
+  ((select id from products where slug = 'argireline-acetyl-hexapeptide-8'), 'Vial - 100mg', 'OP-ARGI-V-100MG', 2499, 25, 'vial', true),
+  ((select id from products where slug = 'argireline-acetyl-hexapeptide-8'), 'Vial - 500mg', 'OP-ARGI-V-500MG', 6999, 25, 'vial', true),
+  ((select id from products where slug = 'argireline-acetyl-hexapeptide-8'), 'Vial - 1g', 'OP-ARGI-V-1G', 10999, 25, 'vial', true),
+  ((select id from products where slug = 'matrixyl-palmitoyl-pentapeptide-4'), 'Vial - 100mg', 'OP-MATR-V-100MG', 2799, 25, 'vial', true),
+  ((select id from products where slug = 'matrixyl-palmitoyl-pentapeptide-4'), 'Vial - 500mg', 'OP-MATR-V-500MG', 7499, 25, 'vial', true),
+  ((select id from products where slug = 'matrixyl-palmitoyl-pentapeptide-4'), 'Vial - 1g', 'OP-MATR-V-1G', 11499, 25, 'vial', true)
+on conflict (sku) do nothing;
