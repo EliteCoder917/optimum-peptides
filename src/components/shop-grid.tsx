@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
+  formatPrice,
   getDisplayPriceCents,
   PRODUCT_CATEGORIES,
 } from "@/lib/product-helpers";
@@ -68,14 +69,17 @@ export default function ShopGrid({ products }: { products: Product[] }) {
               href={`/shop/${product.slug}`}
               className="panel group flex flex-col overflow-hidden rounded-2xl p-6 transition-transform duration-300 hover:-translate-y-1"
             >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold">{product.name}</h2>
-                </div>
+              {/* min-w-0 on the title and shrink-0 on the badge: without both,
+                  a long product name ("Argireline (Acetyl Hexapeptide-8)")
+                  squeezes the badge until "From £24.99" wraps onto two lines. */}
+              <div className="flex items-start justify-between gap-3">
+                <h2 className="min-w-0 text-xl font-semibold">
+                  {product.name}
+                </h2>
 
                 {priceCents !== null && (
-                  <span className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs text-primary">
-                    From ${(priceCents / 100).toFixed(2)}
+                  <span className="shrink-0 whitespace-nowrap rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs text-primary">
+                    From {formatPrice(priceCents)}
                   </span>
                 )}
               </div>

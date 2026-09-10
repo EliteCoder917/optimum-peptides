@@ -5,10 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/components/cart-provider";
 import ResearchNotice from "@/components/research-notice";
-
-function formatPrice(cents: number) {
-  return `$${(cents / 100).toFixed(2)}`;
-}
+import { formatPrice } from "@/lib/product-helpers";
 
 export default function CheckoutPage() {
   const { items, subtotalCents, clear } = useCart();

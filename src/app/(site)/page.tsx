@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getProducts, getProductBySlug } from "@/lib/products";
-import { getDisplayPriceCents } from "@/lib/product-helpers";
+import { formatPrice, getDisplayPriceCents } from "@/lib/product-helpers";
 
 // The compound given the featured slot under the hero.
 //
@@ -132,7 +132,7 @@ export default async function Home() {
 
                 {featuredPriceCents !== null && (
                   <p className="mt-5 text-xs uppercase tracking-[0.18em] text-primary">
-                    From ${(featuredPriceCents / 100).toFixed(2)}
+                    From {formatPrice(featuredPriceCents)}
                   </p>
                 )}
 
@@ -230,7 +230,7 @@ export default async function Home() {
                         </h3>
                         {priceCents !== null && (
                           <p className="mt-1 text-xs uppercase tracking-[0.18em] text-primary">
-                            From ${(priceCents / 100).toFixed(2)}
+                            From {formatPrice(priceCents)}
                           </p>
                         )}
                       </div>

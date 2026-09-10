@@ -75,6 +75,16 @@ export function mapProduct(row: ProductRow): Product {
   };
 }
 
+// Single source of truth for money on the storefront. Prices are stored as
+// GBP minor units, so every renderer has to agree on both the divisor and the
+// symbol — this was previously five copies of the same function plus four
+// inline template literals, every one of them printing "$" over a sterling
+// amount. Kept as plain string building rather than Intl.NumberFormat so the
+// server and client can never disagree about the output and trip hydration.
+export function formatPrice(cents: number): string {
+  return `£${(cents / 100).toFixed(2)}`;
+}
+
 export function getDisplayPriceCents(product: Product): number | null {
   const activePrices = product.variants
     .filter((variant) => variant.isActive)

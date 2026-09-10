@@ -3,15 +3,12 @@
 import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
+import { formatPrice } from "@/lib/product-helpers";
 
 const FORM_LABELS: Record<string, string> = {
   vial: "Vial",
   pen: "Pen",
 };
-
-function formatPrice(cents: number) {
-  return `$${(cents / 100).toFixed(2)}`;
-}
 
 export default function CartPage() {
   const { items, subtotalCents, updateQuantity, removeItem } = useCart();

@@ -8,7 +8,7 @@ import StatusBadge from "@/components/admin/status-badge";
 import EmptyState from "@/components/admin/empty-state";
 import ProductFormModal from "@/components/admin/product-form-modal";
 import { supabaseBrowser } from "@/lib/supabase/client";
-import { mapProduct } from "@/lib/product-helpers";
+import { mapProduct, formatPrice as formatCents } from "@/lib/product-helpers";
 import type { Product } from "@/types";
 
 const FILTERS = ["All", "Active", "Inactive"] as const;
@@ -19,9 +19,9 @@ function formatPrice(product: Product) {
 
   const min = Math.min(...prices);
   const max = Math.max(...prices);
-  const format = (cents: number) => `$${(cents / 100).toFixed(2)}`;
-
-  return min === max ? format(min) : `${format(min)} – ${format(max)}`;
+  return min === max
+    ? formatCents(min)
+    : `${formatCents(min)} – ${formatCents(max)}`;
 }
 
 function totalStock(product: Product) {

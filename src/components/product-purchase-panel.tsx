@@ -3,16 +3,13 @@
 import { useMemo, useState } from "react";
 import { Check, Minus, Plus } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
+import { formatPrice } from "@/lib/product-helpers";
 import type { Product, ProductVariant, VariantForm } from "@/types";
 
 const FORM_LABELS: Record<VariantForm, string> = {
   vial: "Vial",
   pen: "Pen",
 };
-
-function formatPrice(cents: number) {
-  return `$${(cents / 100).toFixed(2)}`;
-}
 
 export default function ProductPurchasePanel({
   product,

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { formatPrice } from "@/lib/product-helpers";
 
 type OrderItemRow = {
   id: string;
@@ -10,9 +11,6 @@ type OrderItemRow = {
   quantity: number;
 };
 
-function formatPrice(cents: number) {
-  return `$${(cents / 100).toFixed(2)}`;
-}
 
 export default async function OrderConfirmationPage({
   params,
