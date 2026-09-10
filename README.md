@@ -117,6 +117,32 @@ valid session and `admin_users` membership, redirecting to login otherwise.
 Supabase's built-in email sending has a low rate limit on the free tier —
 if invites stop arriving, that's usually why.
 
+### Admin data layer
+
+Admin reads/writes go through `src/lib/admin-queries.ts` (browser client, for
+the interactive Orders and Reviews pages) and `src/lib/admin-stats.ts` (server
+client, for the Dashboard). Neither uses the service role, and that is
+deliberate: **RLS is the authorisation boundary**, not `src/proxy.ts`. The
+proxy only decides who gets served the page; the `is_admin()` policies in
+`20260815000002_admin_auth.sql` decide who gets rows. A signed-in non-admin
+hitting these gets empty results rather than data.
+
+Two consequences worth knowing before extending it:
+
+- If you move an admin mutation to a Server Action, it still needs its own
+  authorisation check — Server Functions are reachable by direct POST, not
+  only through your UI, so the page-level guard does not cover them.
+- Dashboard totals are summed in JS because PostgREST has no aggregate
+  endpoint without a view or RPC. Fine at current row counts; if orders reach
+  the tens of thousands this wants a database view.
+
+The admin status vocabularies are the database enums, not free labels:
+`order_status` is `pending | paid | fulfilled | cancelled` and `review_status`
+is `pending | approved | rejected`. The UI previously offered
+Processing/Shipped/Delivered, none of which the column can store. "Approved" is
+shown as "Published" because the public select policy is `status = 'approved'`
+— approving is the act that puts a review on the product page.
+
 ### Reviews
 
 `reviews` holds title, description, star rating (1–5), and an array of
@@ -216,13 +242,29 @@ Rules to hold to when touching storefront copy or product data:
   and published mechanism only. Where a compound is licensed as a medicine
   somewhere, that is stated as factual background, never as an indication
   on offer.
-- **The research-use statement must be visible at the point of sale** —
-  `ResearchNotice` (`src/components/research-notice.tsx`) on the product
-  page and inline at checkout, plus the footer disclaimer sitewide. It was
-  previously on every page and on every catalogue card as well; that was
-  cut back because four simultaneous copies of the same warning read as
-  boilerplate and stopped being noticed. Keep the product-page and checkout
-  ones — they are the two that sit next to a price and a buy button.
+- **Trial status, never trial results.** "Development was discontinued in
+  2007", "no marketing authorisation", "the literature is almost entirely
+  preclinical" are all factual background about a compound and belong in a
+  description. What a compound *achieved* in a trial — how much weight came
+  off, how well it worked — is a therapeutic claim, and one sitting next to
+  a price is the clearest possible evidence of medicinal-by-presentation.
+  Plain English is not the issue and is actively wanted: descriptions were
+  rewritten out of receptor-signalling jargon in
+  `20260910000002_plain_descriptions.sql` without loosening any of this.
+  Keep the honest caveats when editing — "independent replication remains
+  limited" is load-bearing, not hedging.
+- **The research-use statement must be visible at the point of sale.** On a
+  product page that is the amber line above the price, not a panel below the
+  buy button — a statement under the fold is passed on the way out, not on
+  the way in. `ResearchNotice` (`src/components/research-notice.tsx`) still
+  runs inline at checkout, and the footer disclaimer runs sitewide.
+  The statement was previously on every page, on every catalogue card, and
+  three times over on each product page; that was cut back because repeated
+  copies of the same warning read as boilerplate and stop being noticed.
+  What earns a listing the "no product claim is made" exclusion is the
+  content of the copy, not the number of disclaimers stacked around it — so
+  the note qualifying the description stays glued to the description, and
+  the rest went.
 
 `AgeGate` blocks the catalogue until the visitor confirms 18+ and research
 intent, once per browser session. Checkout requires an explicit research-use declaration, re-checked
