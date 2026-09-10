@@ -1,39 +1,89 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Search, Star } from "lucide-react";
 import AdminTopbar from "@/components/admin/topbar";
 import FilterTabs from "@/components/admin/filter-tabs";
-import StatusBadge from "@/components/admin/status-badge";
+import StatusBadge, { type StatusTone } from "@/components/admin/status-badge";
 import StatCard from "@/components/admin/stat-card";
 import EmptyState from "@/components/admin/empty-state";
+import { formatDate } from "@/lib/format";
+import {
+  fetchReviews,
+  updateReviewStatus,
+  REVIEW_STATUS_LABELS,
+  type AdminReview,
+  type ReviewStatus,
+} from "@/lib/admin-queries";
 
-type ReviewStatus = "Pending" | "Published" | "Rejected";
+const STATUSES: ReviewStatus[] = ["pending", "approved", "rejected"];
+const FILTERS = ["All", ...STATUSES] as const;
 
-type ReviewRow = {
-  id: string;
-  reviewerName: string;
-  productName: string;
-  rating: number;
-  date: string;
-  title: string;
-  description: string;
-  status: ReviewStatus;
+const STATUS_TONE: Record<ReviewStatus, StatusTone> = {
+  pending: "amber",
+  approved: "green",
+  rejected: "red",
 };
 
-// Replace with a real query once the reviews table is wired up
-const reviews: ReviewRow[] = [];
-
-const FILTERS = ["All", "Pending", "Published", "Rejected"] as const;
-
 export default function AdminReviews() {
+  const [reviews, setReviews] = useState<AdminReview[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [savingId, setSavingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
   const [query, setQuery] = useState("");
 
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      setReviews(await fetchReviews());
+      setError(null);
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Could not load reviews.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+  }, [load]);
+
+  async function moderate(id: string, status: ReviewStatus) {
+    setSavingId(id);
+    const previous = reviews;
+
+    setReviews((current) =>
+      current.map((review) =>
+        review.id === id ? { ...review, status } : review,
+      ),
+    );
+
+    try {
+      await updateReviewStatus(id, status);
+      setError(null);
+    } catch (cause) {
+      setReviews(previous);
+      setError(
+        cause instanceof Error ? cause.message : "Could not update the review.",
+      );
+    } finally {
+      setSavingId(null);
+    }
+  }
+
+  const term = query.trim().toLowerCase();
   const visible = reviews.filter(
     (review) =>
       (filter === "All" || review.status === filter) &&
-      review.title.toLowerCase().includes(query.toLowerCase()),
+      (term === "" ||
+        review.title.toLowerCase().includes(term) ||
+        review.description.toLowerCase().includes(term) ||
+        review.reviewerName.toLowerCase().includes(term) ||
+        review.productName.toLowerCase().includes(term)),
   );
 
   const averageRating = reviews.length
@@ -55,26 +105,38 @@ export default function AdminReviews() {
           <StatCard label="Total Reviews" value={String(reviews.length)} />
           <StatCard
             label="Pending"
-            value={String(reviews.filter((r) => r.status === "Pending").length)}
+            value={String(reviews.filter((r) => r.status === "pending").length)}
           />
           <StatCard
             label="Published"
             value={String(
-              reviews.filter((r) => r.status === "Published").length,
+              reviews.filter((r) => r.status === "approved").length,
             )}
           />
         </div>
 
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
           <FilterTabs
-            options={FILTERS.map((label) => ({
-              label,
+            options={FILTERS.map((value) => ({
+              label:
+                value === "All"
+                  ? "All"
+                  : REVIEW_STATUS_LABELS[value as ReviewStatus],
               count: reviews.filter(
-                (r) => label === "All" || r.status === label,
+                (r) => value === "All" || r.status === value,
               ).length,
             }))}
-            active={filter}
-            onChange={(label) => setFilter(label as (typeof FILTERS)[number])}
+            active={
+              filter === "All"
+                ? "All"
+                : REVIEW_STATUS_LABELS[filter as ReviewStatus]
+            }
+            onChange={(label) => {
+              const match = STATUSES.find(
+                (status) => REVIEW_STATUS_LABELS[status] === label,
+              );
+              setFilter(match ?? "All");
+            }}
           />
 
           <div className="relative">
@@ -88,6 +150,12 @@ export default function AdminReviews() {
             />
           </div>
         </div>
+
+        {error && (
+          <p className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </p>
+        )}
 
         <div id="tour-reviews-queue" className="mt-6">
           {visible.length > 0 && (
@@ -105,16 +173,8 @@ export default function AdminReviews() {
                     <p className="text-sm text-gray-500">
                       {review.productName}
                     </p>
-                    <StatusBadge
-                      tone={
-                        review.status === "Published"
-                          ? "green"
-                          : review.status === "Pending"
-                            ? "amber"
-                            : "red"
-                      }
-                    >
-                      {review.status}
+                    <StatusBadge tone={STATUS_TONE[review.status]}>
+                      {REVIEW_STATUS_LABELS[review.status]}
                     </StatusBadge>
                   </div>
 
@@ -130,25 +190,34 @@ export default function AdminReviews() {
                       />
                     ))}
                     <span className="ml-1 text-xs text-gray-400">
-                      {review.date}
+                      {formatDate(review.createdAt)}
                     </span>
                   </div>
 
-                  <p className="mt-3 text-sm text-gray-600">
+                  {review.title && (
+                    <p className="mt-3 text-sm font-medium text-gray-900">
+                      {review.title}
+                    </p>
+                  )}
+                  <p className="mt-1 text-sm text-gray-600">
                     {review.description}
                   </p>
 
-                  {review.status === "Pending" ? (
+                  {review.status === "pending" ? (
                     <div className="mt-4 flex gap-2">
                       <button
                         type="button"
-                        className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700"
+                        disabled={savingId === review.id}
+                        onClick={() => moderate(review.id, "approved")}
+                        className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
                       >
                         Approve
                       </button>
                       <button
                         type="button"
-                        className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100"
+                        disabled={savingId === review.id}
+                        onClick={() => moderate(review.id, "rejected")}
+                        className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100 disabled:opacity-50"
                       >
                         Reject
                       </button>
@@ -156,7 +225,9 @@ export default function AdminReviews() {
                   ) : (
                     <button
                       type="button"
-                      className="mt-4 text-xs font-medium text-gray-400 hover:text-gray-600"
+                      disabled={savingId === review.id}
+                      onClick={() => moderate(review.id, "pending")}
+                      className="mt-4 text-xs font-medium text-gray-400 hover:text-gray-600 disabled:opacity-50"
                     >
                       Undo
                     </button>
@@ -166,11 +237,25 @@ export default function AdminReviews() {
             </div>
           )}
 
-          {visible.length === 0 && (
+          {loading && (
+            <div className="rounded-2xl border border-gray-200 bg-white px-6 py-8 text-center text-sm text-gray-400">
+              Loading reviews…
+            </div>
+          )}
+
+          {!loading && visible.length === 0 && (
             <div className="rounded-2xl border border-gray-200 bg-white">
               <EmptyState
-                title="No reviews yet"
-                description="Customer reviews will show up here for moderation once your store starts shipping orders."
+                title={
+                  reviews.length === 0
+                    ? "No reviews yet"
+                    : "No matching reviews"
+                }
+                description={
+                  reviews.length === 0
+                    ? "Customer reviews will show up here for moderation once your store starts shipping orders."
+                    : "Try a different search or filter."
+                }
               />
             </div>
           )}

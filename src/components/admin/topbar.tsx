@@ -1,4 +1,3 @@
-import { Search } from "lucide-react";
 import NotificationsBell from "@/components/admin/notifications-bell";
 
 export default function AdminTopbar({
@@ -15,19 +14,11 @@ export default function AdminTopbar({
         <p className="mt-0.5 text-sm text-gray-500">{subtitle}</p>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative hidden sm:block">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search..."
-            aria-label="Search"
-            className="h-9 w-56 rounded-full border border-gray-200 bg-gray-50 pl-9 pr-4 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-blue-400"
-          />
-        </div>
-
-        <NotificationsBell />
-      </div>
+      {/* No global search here on purpose: it was a dead input with no state
+          or handler, sitting directly above the working per-page search on
+          Products, Orders and Reviews. Two search boxes where only the lower
+          one responds is worse than one. */}
+      <NotificationsBell />
     </header>
   );
 }
